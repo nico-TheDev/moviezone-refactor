@@ -11,9 +11,21 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-gray-50 dark:bg-gray-950;
+  color-scheme: light;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
+  }
+}
+
+
+@layer base {
+  a.active {
+    color: var(--color-primary);
+  }
+
+  a:hover {
+    color: var(--color-primary-hover);
   }
 }

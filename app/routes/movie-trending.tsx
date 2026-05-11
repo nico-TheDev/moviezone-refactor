@@ -7,10 +7,10 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-export default function Home() {
+export default function MoviesTrending() {
     return (
         <div>
-            <div className="text-white bg-red-500">Homepage</div>
+            <div className="text-white bg-red-500">Trending Movies</div>
         </div>
     );
 }
