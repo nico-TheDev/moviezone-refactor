@@ -9,7 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -21,6 +22,10 @@ export const links: Route.LinksFunction = () => [
     {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600;700&display=swap",
+    },
+    {
+        rel: "icon",
+        href: "/icons/favicon.ico",
     },
 ];
 
@@ -42,12 +47,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
     );
 }
 
-const queryClient = new QueryClient();
-
 export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <Outlet />;
+            <Outlet />
         </QueryClientProvider>
     );
 }
