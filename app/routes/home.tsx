@@ -4,6 +4,7 @@ import { API } from "@/constants/api";
 import useEmblaCarousel from "embla-carousel-react";
 import type { MovieResult } from "@/types/tmdb";
 import { StarIcon } from "lucide-react";
+import GenreList from "@/components/GenreList";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -17,14 +18,7 @@ interface IProps {
 }
 
 function FeaturedCarousel({ movies }: IProps) {
-    const [emblaRef] = useEmblaCarousel();
-    const { data: genreMap, isError, isPending } = useMovieGenres();
-
-    // console.log(genreMap);
-
-    if (!genreMap && isError) {
-        return <div className="p-4 h-[90vh] bg-red-100">Error occurred while fetching genres.</div>;
-    }
+    const [emblaRef] = useEmblaCarousel({ loop: true });
 
     return (
         <div className="embla">
@@ -38,30 +32,28 @@ function FeaturedCarousel({ movies }: IProps) {
                                 className="absolute z-0 w-full h-full object-cover brightness-50"
                             />
 
-                            <div className="relative flex max-w-7xl w-full mx-auto h-full z-10 border-amber-100 border flex-col justify-center pt-50">
-                                <div className=" border border-red-500">
-                                    <h3 className="text-2xl">{movie.title}</h3>
-                                    <p className="">
-                                        <span className="inline-flex items-center">
+                            <div className="relative flex max-w-7xl w-full mx-auto h-full z-10 flex-col justify-center pt-50">
+                                <div className="p-4">
+                                    <h3 className="text-4xl font-display mb-4 max-w-2xl">
+                                        {movie.title}
+                                    </h3>
+                                    <p className="flex items-center gap-2 text-sm text-gray-300 font-light mb-2">
+                                        <span className="inline-flex items-center text-primary gap-2 font-medium">
                                             <StarIcon
                                                 size={20}
                                                 className="inline-block text-primary"
                                                 fill="currentColor"
                                             />
-                                            {movie.vote_average}
+                                            {movie.vote_average.toFixed(2)}
                                         </span>
                                         •<span className="">{movie.release_date?.slice(0, 4)}</span>
                                         •
-                                        {/* <span className="">
-                                        {movie.genre_ids &&
-                                        movie.genre_ids.map((id) => {
-                                            const genreName = genreMap[id] || "Unknown";
-                                            return genreName;
-                                            })}
-                                            </span> */}
+                                        <GenreList genre_ids={movie.genre_ids} type="movie" />
                                     </p>
 
-                                    <p className="">{movie.overview}</p>
+                                    <p className="max-w-xl line-clamp-4 text-sm">
+                                        {movie.overview}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -91,8 +83,6 @@ export default function Home() {
     }
 
     const featuredMovies = data.results.slice(0, 7) || [];
-
-    console.log(featuredMovies);
 
     return (
         <main className="h-[90vh]">

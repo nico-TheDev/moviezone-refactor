@@ -20,17 +20,12 @@ export const moviesQueries = {
             queryKey: moviesKeys.genres(),
             queryFn: getGenresList,
             staleTime: Infinity, // fetch once and never refetch since genres don't change often,
-            select: (data) => {
-                if (!data.genres) {
-                    throw new Error("Invalid genres data");
-                }
-                console.log(data);
-                // Transform the genres list into a map for easier access
-                const genresMap: Record<number, string> = {};
-                data.genres.forEach((genre) => {
-                    genresMap[genre.id] = genre.name || "Unknown";
-                });
-                return genresMap;
-            },
+            select: (data) =>
+                data.genres
+                    ? data.genres.reduce((acc, genre) => {
+                          acc.set(genre.id, genre.name || "Unknown");
+                          return acc;
+                      }, new Map<number, string>())
+                    : new Map<number, string>(),
         }),
 };
