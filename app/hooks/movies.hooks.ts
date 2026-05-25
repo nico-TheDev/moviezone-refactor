@@ -9,3 +9,11 @@ export const useFeaturedMovies = () => {
 export const useMovieGenres = () => {
     return useQuery(moviesQueries.genres());
 };
+
+export const useMovieDetails = (movieId: string) => {
+    return useQuery(moviesQueries.movieDetails(movieId));
+};
+
+export const useMovieVideos = (movieId: string) => {
+    return useQuery(moviesQueries.movieVideos(movieId));
+};

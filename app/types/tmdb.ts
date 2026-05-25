@@ -8,6 +8,10 @@ export type Movie = ResponseBody<"movie-details">;
 export type TvShow = ResponseBody<"tv-series-details">;
 export type Person = ResponseBody<"person-details">;
 
+// --- Movie videos ---
+export type MovieVideosResponse = ResponseBody<"movie-videos">;
+export type MovieVideo = NonNullable<MovieVideosResponse["results"]>[number];
+
 // --- List item types ---
 export type MovieResult = NonNullable<ResponseBody<"discover-movie">["results"]>[number];
 export type TvResult = NonNullable<ResponseBody<"discover-tv">["results"]>[number];

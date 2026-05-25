@@ -7,7 +7,7 @@ type Props = {};
 function Nav({}: Props) {
     return (
         <>
-            <nav className="absolute top-0 left-0 w-full z-10">
+            <nav className="absolute top-0 left-0 w-full z-[999]">
                 <div className="h-[10vh] max-w-7xl w-full mx-auto p-4 flex items-center justify-between">
                     <NavLink to="/">
                         <img src="/img/logo.png" alt="MovieZone Logo" className="h-10" />

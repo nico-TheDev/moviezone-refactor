@@ -4,5 +4,6 @@ export default [
     layout("components/layout/Nav.tsx", [
         index("routes/home.tsx"),
         route("movies/trending", "routes/movie-trending.tsx"),
+        route("media/:type/:movieId", "routes/media-details.tsx"),
     ]),
 ] satisfies RouteConfig;
