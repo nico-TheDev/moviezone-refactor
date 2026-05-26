@@ -32,7 +32,7 @@ export const getFeaturedMoviesAndTVShows = async (signal?: AbortSignal) => {
         }),
     ]);
 
-    return [...movies.results.slice(0, 7), ...tvShows.results.slice(0, 7)];
+    return [...movies.results.slice(0, 10), ...tvShows.results.slice(0, 10)];
 };
 
 export const getDetails = <T extends MediaType>(mediaType: T, id: string, signal?: AbortSignal) =>

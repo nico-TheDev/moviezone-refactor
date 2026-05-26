@@ -30,14 +30,16 @@ export default function Home() {
             <section className="my-16">
                 <MediaCarousel
                     mediaData={featuredMovies ?? []}
-                    options={{ loop: true }}
+                    options={{ loop: true, dragFree: true }}
                     title="Featured Movies"
+                    orientation="portrait"
+                    topLabelEnabled
                 />
             </section>
             <section className="my-16">
                 <MediaCarousel
                     mediaData={featuredTVShows ?? []}
-                    options={{ loop: true }}
+                    options={{ loop: true, dragFree: true }}
                     title="Featured TV Shows"
                 />
             </section>

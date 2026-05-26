@@ -5,6 +5,7 @@ import type { EmblaCarouselType, EmblaOptionsType } from "embla-carousel";
 import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
 import { API } from "@/constants/api";
 import { ChevronLeft, ChevronRight, StarIcon } from "lucide-react";
+import { cn } from "@/utils/css-helpers";
 
 type UsePrevNextButtonsType = {
     prevBtnDisabled: boolean;
@@ -38,7 +39,7 @@ export const usePrevNextButtons = (
         if (!emblaApi) return;
 
         onSelect(emblaApi);
-        emblaApi.on("reinit", onSelect).on("select", onSelect);
+        emblaApi.on("reInit", onSelect).on("select", onSelect);
     }, [emblaApi, onSelect]);
 
     return {
@@ -49,15 +50,15 @@ export const usePrevNextButtons = (
     };
 };
 
-export const PrevButton = (props: React.ComponentPropsWithRef<"button">) => {
-    const { children, disabled, ...restProps } = props;
-
+export const PrevButton = ({
+    children,
+    className,
+    ...restProps
+}: React.ComponentPropsWithRef<"button">) => {
     return (
         <button
-            className={"embla__button embla__button--prev".concat(
-                disabled ? " embla__button--disabled" : "",
-            )}
             type="button"
+            className={`disabled:opacity-50 disabled:cursor-not-allowed ${className ?? ""}`}
             {...restProps}>
             <ChevronLeft size={40} />
             {children}
@@ -65,36 +66,65 @@ export const PrevButton = (props: React.ComponentPropsWithRef<"button">) => {
     );
 };
 
-export const NextButton = (props: React.ComponentPropsWithRef<"button">) => {
-    const { children, disabled, ...restProps } = props;
-
+export const NextButton = ({
+    children,
+    className,
+    ...restProps
+}: React.ComponentPropsWithRef<"button">) => {
     return (
         <button
-            className={"embla__button embla__button--next".concat(
-                disabled ? " embla__button--disabled" : "",
-            )}
             type="button"
+            className={`disabled:opacity-50 disabled:cursor-not-allowed ${className ?? ""}`}
             {...restProps}>
             <ChevronRight size={40} />
             {children}
         </button>
     );
 };
-interface IProps {
-    mediaData: MovieResult[] | TvResult[];
-    options: EmblaOptionsType;
-    title: string;
-}
 
-function MediaCard({ media }: { media: MovieResult | TvResult }) {
+function MediaCard({
+    media,
+    orientation,
+    topLabelEnabled = false,
+    index,
+}: {
+    media: MovieResult | TvResult;
+    orientation: "portrait" | "landscape";
+    topLabelEnabled?: boolean;
+    index: number;
+}) {
     return (
-        <div className="embla__slide group/card-img cursor-pointer" key={media.id}>
-            <div className="h-40 overflow-hidden mb-2 rounded-md cursor-pointer">
+        <div
+            className={cn(
+                "min-w-0 group/card-img cursor-pointer pr-4",
+                orientation === "landscape" ? "flex-[0_0_300px]" : "flex-[0_0_250px]",
+            )}
+            key={media.id}>
+            <div
+                className={cn(
+                    "overflow-hidden mb-2 rounded-md cursor-pointer relative",
+                    orientation === "landscape" ? "h-40" : "h-100",
+                )}>
                 <img
-                    src={`${API.IMAGE_BACKDROP_URL}${media.backdrop_path}`}
+                    src={
+                        orientation === "landscape"
+                            ? `${API.IMAGE_BACKDROP_URL}${media.backdrop_path}`
+                            : `${API.IMAGE_POSTER_URL}${media.poster_path}`
+                    }
                     alt={getTitle(media) ?? ""}
                     className="block w-full h-full object-cover group-hover/card-img:scale-110 transition-transform duration-300"
                 />
+                {topLabelEnabled && (
+                    <div className="absolute top-0 left-0 bg-primary text-white p-2">
+                        <p className="text-xs text-center uppercase">
+                            Top
+                            <span className="block text-sm font-medium">{index + 1}</span>
+                        </p>
+
+                        <span className="inline-block w-0 h-0 border-t-20 border-t-primary border-r-20 border-r-transparent absolute top-full left-0"></span>
+                        <span className="inline-block w-0 h-0 border-t-20 border-t-primary border-l-20 border-l-transparent absolute top-full right-0"></span>
+                    </div>
+                )}
             </div>
             <div className="text-white">
                 <p className="text-sm group-hover/card-img:text-primary mb-2">{getTitle(media)}</p>
@@ -116,34 +146,62 @@ function MediaCard({ media }: { media: MovieResult | TvResult }) {
     );
 }
 
-export function MediaCarousel({ mediaData, options, title }: IProps) {
+interface IProps {
+    mediaData: MovieResult[] | TvResult[];
+    options: EmblaOptionsType;
+    title: string;
+    orientation?: "portrait" | "landscape";
+    topLabelEnabled?: boolean;
+}
+
+export function MediaCarousel({
+    mediaData,
+    options,
+    title,
+    orientation = "landscape",
+    topLabelEnabled = false,
+}: IProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
     const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } =
         usePrevNextButtons(emblaApi);
 
     return (
-        <div className="embla media-carousel max-w-[90%] mx-auto group/carousel">
+        <div className="max-w-[90%] mx-auto group/carousel">
             <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
                 <span className="w-1 bg-primary block h-8" />
                 {title}
             </h2>
-            <div className="embla__viewport relative" ref={emblaRef}>
-                <div className="embla__container">
-                    {mediaData.map((media) => (
-                        <MediaCard key={media.id} media={media} />
-                    ))}
+            <div className="relative">
+                <div className="overflow-hidden" ref={emblaRef}>
+                    <div className="flex touch-pan-y touch-pinch-zoom">
+                        {mediaData.map((media, index) => (
+                            <MediaCard
+                                key={media.id}
+                                media={media}
+                                orientation={orientation}
+                                topLabelEnabled={topLabelEnabled}
+                                index={index}
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 <PrevButton
                     onClick={onPrevButtonClick}
                     disabled={prevBtnDisabled}
-                    className="opacity-0 absolute top-0 left-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer h-40 w-10 group-hover/carousel:opacity-100 transition-opacity duration-300"
+                    className={cn(
+                        "opacity-0 absolute top-0 left-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer  w-10 group-hover/carousel:opacity-100 transition-opacity duration-300",
+                        orientation === "landscape" ? "h-40" : "h-100",
+                    )}
                 />
                 <NextButton
                     onClick={onNextButtonClick}
                     disabled={nextBtnDisabled}
-                    className="opacity-0 absolute top-0 right-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer h-40 w-10 group-hover/carousel:opacity-100 transition-opacity duration-300"
+                    className={cn(
+                        "opacity-0 absolute top-0 right-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer w-10 group-hover/carousel:opacity-100 transition-opacity duration-300",
+                        orientation === "landscape" ? "h-40" : "h-100",
+                    )}
                 />
             </div>
         </div>

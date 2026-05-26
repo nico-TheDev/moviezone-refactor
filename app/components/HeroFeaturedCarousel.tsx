@@ -18,11 +18,11 @@ export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
     const navigate = useNavigate();
 
     return (
-        <div className="embla">
-            <div className="embla__viewport" ref={emblaRef}>
-                <div className="embla__container w-screen">
+        <div>
+            <div className="overflow-hidden" ref={emblaRef}>
+                <div className="flex touch-pan-y touch-pinch-zoom w-screen">
                     {(items as FeaturedItem[]).map((item) => (
-                        <div className="embla__slide h-svh w-full" key={item.id}>
+                        <div className="flex-[0_0_100%] min-w-0 h-svh" key={item.id}>
                             <img
                                 src={`${API.IMAGE_BACKDROP_URL}${item.backdrop_path}`}
                                 alt={getTitle(item) ?? ""}
