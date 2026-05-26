@@ -3,6 +3,7 @@ import type { Route } from "./+types/home";
 import { HeroFeaturedCarousel } from "@/components/HeroFeaturedCarousel";
 import { MediaCarousel } from "@/components/MediaCarousel";
 import { isMovieResult } from "@/utils/media-string-helpers";
+import { useTrendingTop10 } from "@/hooks/media.hooks";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -13,6 +14,11 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
     const { data: featuredItems, isPending, isError } = useFeaturedMoviesAndTVShows();
+    const {
+        data: trendingTop10,
+        isPending: isTrendingTop10Pending,
+        isError: isTrendingTop10Error,
+    } = useTrendingTop10();
     const featuredMovies = featuredItems?.filter((item) => isMovieResult(item));
     const featuredTVShows = featuredItems?.filter((item) => !isMovieResult(item));
 
@@ -26,16 +32,24 @@ export default function Home() {
 
     return (
         <main className="h-[90vh]">
-            <HeroFeaturedCarousel items={featuredItems} mediaType="tv" />
+            <HeroFeaturedCarousel items={trendingTop10 ?? []} mediaType="tv" />
+            <section className="my-16">
+                <MediaCarousel
+                    mediaData={trendingTop10 ?? []}
+                    options={{ loop: true, dragFree: true }}
+                    title="Trending Today"
+                    orientation="portrait"
+                    topLabelEnabled
+                />
+            </section>
             <section className="my-16">
                 <MediaCarousel
                     mediaData={featuredMovies ?? []}
                     options={{ loop: true, dragFree: true }}
                     title="Featured Movies"
-                    orientation="portrait"
-                    topLabelEnabled
                 />
             </section>
+
             <section className="my-16">
                 <MediaCarousel
                     mediaData={featuredTVShows ?? []}

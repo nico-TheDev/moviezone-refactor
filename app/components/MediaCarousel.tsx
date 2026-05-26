@@ -121,8 +121,8 @@ function MediaCard({
                             <span className="block text-sm font-medium">{index + 1}</span>
                         </p>
 
-                        <span className="inline-block w-0 h-0 border-t-20 border-t-primary border-r-20 border-r-transparent absolute top-full left-0"></span>
-                        <span className="inline-block w-0 h-0 border-t-20 border-t-primary border-l-20 border-l-transparent absolute top-full right-0"></span>
+                        <span className="inline-block w-0 h-0 border-t-10 border-t-primary border-r-20 border-r-transparent absolute top-full left-0"></span>
+                        <span className="inline-block w-0 h-0 border-t-10 border-t-primary border-l-20 border-l-transparent absolute top-full right-0"></span>
                     </div>
                 )}
             </div>

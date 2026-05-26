@@ -3,6 +3,7 @@ import {
     getFeatured,
     getFeaturedMoviesAndTVShows,
     getGenres,
+    getTrendingTop10,
     getVideos,
 } from "@/api/media.api";
 import type { MediaType, MovieVideo } from "@/types/tmdb";
@@ -10,6 +11,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 export const mediaKeys = {
     all: ["media"] as const,
+    top10Trending: () => [...mediaKeys.all, "top10Trending"] as const,
     byType: (mediaType: MediaType) => [...mediaKeys.all, mediaType] as const,
     featuredMoviesAndTVShows: () => [...mediaKeys.all, "featuredMoviesAndTVShows"] as const,
     featured: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "featured"] as const,
@@ -34,6 +36,12 @@ function pickBackgroundVideo(videos: MovieVideo[]): MovieVideo | undefined {
 }
 
 export const mediaQueries = {
+    top10Trending: () =>
+        queryOptions({
+            queryKey: mediaKeys.top10Trending(),
+            queryFn: ({ signal }) => getTrendingTop10(signal),
+            select: (data) => data.results.slice(0, 10) ?? [],
+        }),
     featuredMoviesAndTVShows: () =>
         queryOptions({
             queryKey: mediaKeys.featuredMoviesAndTVShows(),

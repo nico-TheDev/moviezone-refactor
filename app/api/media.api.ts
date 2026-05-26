@@ -19,6 +19,11 @@ export const getFeatured = <T extends MediaType>(mediaType: T, signal?: AbortSig
         { signal },
     );
 
+export const getTrendingTop10 = (signal?: AbortSignal) =>
+    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(`/trending/all/day?language=en-US`, {
+        signal,
+    });
+
 export const getFeaturedMoviesAndTVShows = async (signal?: AbortSignal) => {
     const [movies, tvShows] = await Promise.all([
         tmdbFetch<PaginatedResponse<ResultByType<"movie">>>(
