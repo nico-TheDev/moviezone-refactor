@@ -1,8 +1,8 @@
 import { mediaQueries } from "@/queries/media.queries";
 import { useQuery } from "@tanstack/react-query";
 
-export const useFeaturedMoviesAndTVShows = () => {
-    return useQuery(mediaQueries.featuredMoviesAndTVShows());
+export const useFeaturedTvShows = () => {
+    return useQuery(mediaQueries.featured("tv"));
 };
 
 export const useTvGenres = () => {

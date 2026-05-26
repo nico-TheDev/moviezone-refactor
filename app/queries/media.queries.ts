@@ -1,7 +1,6 @@
 import {
     getDetails,
     getFeatured,
-    getFeaturedMoviesAndTVShows,
     getGenres,
     getTrendingTop10,
     getVideos,
@@ -13,7 +12,6 @@ export const mediaKeys = {
     all: ["media"] as const,
     top10Trending: () => [...mediaKeys.all, "top10Trending"] as const,
     byType: (mediaType: MediaType) => [...mediaKeys.all, mediaType] as const,
-    featuredMoviesAndTVShows: () => [...mediaKeys.all, "featuredMoviesAndTVShows"] as const,
     featured: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "featured"] as const,
     genres: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "genres"] as const,
     details: (mediaType: MediaType, id: string) =>
@@ -42,15 +40,11 @@ export const mediaQueries = {
             queryFn: ({ signal }) => getTrendingTop10(signal),
             select: (data) => data.results.slice(0, 10) ?? [],
         }),
-    featuredMoviesAndTVShows: () =>
-        queryOptions({
-            queryKey: mediaKeys.featuredMoviesAndTVShows(),
-            queryFn: ({ signal }) => getFeaturedMoviesAndTVShows(signal),
-        }),
-    featured: (mediaType: MediaType) =>
+    featured: <T extends MediaType>(mediaType: T) =>
         queryOptions({
             queryKey: mediaKeys.featured(mediaType),
             queryFn: ({ signal }) => getFeatured(mediaType, signal),
+            select: (data) => data.results.slice(0, 10),
         }),
     details: <T extends MediaType>(mediaType: T, id: string) =>
         queryOptions({

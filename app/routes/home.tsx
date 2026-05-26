@@ -1,9 +1,9 @@
-import { useFeaturedMoviesAndTVShows } from "@/hooks/tv.hooks";
 import type { Route } from "./+types/home";
 import { HeroFeaturedCarousel } from "@/components/HeroFeaturedCarousel";
+import { HeroFeaturedSkeleton } from "@/components/HeroFeaturedSkeleton";
 import { MediaCarousel } from "@/components/MediaCarousel";
-import { isMovieResult } from "@/utils/media-string-helpers";
-import { useTrendingTop10 } from "@/hooks/media.hooks";
+import { MediaCarouselSkeleton } from "@/components/MediaCarouselSkeleton";
+import { useHomePageData } from "@/hooks/home.hooks";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -12,50 +12,65 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
+function SectionError({ message }: { message: string }) {
+    return <p className="max-w-[90%] mx-auto text-sm text-gray-400">{message}</p>;
+}
+
 export default function Home() {
-    const { data: featuredItems, isPending, isError } = useFeaturedMoviesAndTVShows();
-    const {
-        data: trendingTop10,
-        isPending: isTrendingTop10Pending,
-        isError: isTrendingTop10Error,
-    } = useTrendingTop10();
-    const featuredMovies = featuredItems?.filter((item) => isMovieResult(item));
-    const featuredTVShows = featuredItems?.filter((item) => !isMovieResult(item));
-
-    if (isPending) {
-        return <main className="p-4 h-[90vh]">Loading...</main>;
-    }
-
-    if (isError) {
-        return <main className="p-4 h-[90vh]">Error occurred while fetching featured shows.</main>;
-    }
+    const { trending, featuredMovies, featuredTvShows } = useHomePageData();
 
     return (
         <main className="h-[90vh]">
-            <HeroFeaturedCarousel items={trendingTop10 ?? []} mediaType="tv" />
+            {trending.isPending ? (
+                <HeroFeaturedSkeleton />
+            ) : trending.isError ? (
+                <SectionError message="Failed to load featured shows." />
+            ) : (
+                <HeroFeaturedCarousel items={trending.data ?? []} mediaType="tv" />
+            )}
+
             <section className="my-16">
-                <MediaCarousel
-                    mediaData={trendingTop10 ?? []}
-                    options={{ loop: true, dragFree: true }}
-                    title="Trending Today"
-                    orientation="portrait"
-                    topLabelEnabled
-                />
-            </section>
-            <section className="my-16">
-                <MediaCarousel
-                    mediaData={featuredMovies ?? []}
-                    options={{ loop: true, dragFree: true }}
-                    title="Featured Movies"
-                />
+                {trending.isPending ? (
+                    <MediaCarouselSkeleton title="Trending Today" orientation="portrait" />
+                ) : trending.isError ? (
+                    <SectionError message="Failed to load trending today." />
+                ) : (
+                    <MediaCarousel
+                        mediaData={trending.data ?? []}
+                        options={{ loop: true, dragFree: true }}
+                        title="Trending Today"
+                        orientation="portrait"
+                        topLabelEnabled
+                    />
+                )}
             </section>
 
             <section className="my-16">
-                <MediaCarousel
-                    mediaData={featuredTVShows ?? []}
-                    options={{ loop: true, dragFree: true }}
-                    title="Featured TV Shows"
-                />
+                {featuredMovies.isPending ? (
+                    <MediaCarouselSkeleton title="Featured Movies" />
+                ) : featuredMovies.isError ? (
+                    <SectionError message="Failed to load featured movies." />
+                ) : (
+                    <MediaCarousel
+                        mediaData={featuredMovies.data ?? []}
+                        options={{ loop: true, dragFree: true }}
+                        title="Featured Movies"
+                    />
+                )}
+            </section>
+
+            <section className="my-16">
+                {featuredTvShows.isPending ? (
+                    <MediaCarouselSkeleton title="Featured TV Shows" />
+                ) : featuredTvShows.isError ? (
+                    <SectionError message="Failed to load featured TV shows." />
+                ) : (
+                    <MediaCarousel
+                        mediaData={featuredTvShows.data ?? []}
+                        options={{ loop: true, dragFree: true }}
+                        title="Featured TV Shows"
+                    />
+                )}
             </section>
         </main>
     );

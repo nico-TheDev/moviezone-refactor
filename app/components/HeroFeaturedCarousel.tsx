@@ -33,7 +33,7 @@ function HeroFeaturedItem({ mediaData }: { mediaData: MovieResult | TvResult }) 
                         </span>
                         •<span className="">{getReleaseYear(mediaData)}</span>
                         •
-                        <GenreList genre_ids={mediaData.genre_ids} type={mediaType} />
+                        <GenreList genreIds={mediaData.genre_ids} mediaType={mediaType} />
                     </p>
 
                     <p className="max-w-xl line-clamp-4 text-sm mb-6">{mediaData.overview}</p>

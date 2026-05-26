@@ -24,22 +24,6 @@ export const getTrendingTop10 = (signal?: AbortSignal) =>
         signal,
     });
 
-export const getFeaturedMoviesAndTVShows = async (signal?: AbortSignal) => {
-    const [movies, tvShows] = await Promise.all([
-        tmdbFetch<PaginatedResponse<ResultByType<"movie">>>(
-            `/discover/movie?sort_by=popularity.desc`,
-            {
-                signal,
-            },
-        ),
-        tmdbFetch<PaginatedResponse<ResultByType<"tv">>>(`/discover/tv?sort_by=popularity.desc`, {
-            signal,
-        }),
-    ]);
-
-    return [...movies.results.slice(0, 10), ...tvShows.results.slice(0, 10)];
-};
-
 export const getDetails = <T extends MediaType>(mediaType: T, id: string, signal?: AbortSignal) =>
     tmdbFetch<DetailsByType<T>>(`/${mediaType}/${id}`, { signal });
 
