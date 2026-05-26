@@ -31,6 +31,9 @@ export type PaginatedResponse<T> = {
     total_results: number;
 };
 
+// --- Media type discriminator ---
+export type MediaType = "movie" | "tv";
+
 // --- Multi-search discriminated union ---
 export type MultiSearchResult =
     | (MovieResult & { media_type: "movie" })
