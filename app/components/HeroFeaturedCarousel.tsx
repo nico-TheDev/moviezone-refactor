@@ -4,6 +4,7 @@ import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { InfoIcon, StarIcon } from "lucide-react";
 import GenreList from "@/components/GenreList";
 import { useNavigate } from "react-router";
+import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
 
 interface IProps {
     items: MovieResult[] | TvResult[];
@@ -12,19 +13,6 @@ interface IProps {
 
 type FeaturedItem = MovieResult | TvResult;
 
-function isMovieResult(item: FeaturedItem): item is MovieResult {
-    return "title" in item;
-}
-
-function getTitle(item: FeaturedItem): string | undefined {
-    return isMovieResult(item) ? item.title : item.name;
-}
-
-function getReleaseYear(item: FeaturedItem): string | undefined {
-    const date = isMovieResult(item) ? item.release_date : item.first_air_date;
-    return date?.slice(0, 4);
-}
-
 export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
     const [emblaRef] = useEmblaCarousel({ loop: true });
     const navigate = useNavigate();
@@ -32,9 +20,9 @@ export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
     return (
         <div className="embla">
             <div className="embla__viewport" ref={emblaRef}>
-                <div className="embla__container">
+                <div className="embla__container w-screen">
                     {(items as FeaturedItem[]).map((item) => (
-                        <div className="embla__slide h-screen w-full" key={item.id}>
+                        <div className="embla__slide h-svh w-full" key={item.id}>
                             <img
                                 src={`${API.IMAGE_BACKDROP_URL}${item.backdrop_path}`}
                                 alt={getTitle(item) ?? ""}
@@ -85,9 +73,6 @@ export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
                     ))}
                 </div>
             </div>
-
-            <button className="embla__prev">Scroll to prev</button>
-            <button className="embla__next">Scroll to next</button>
         </div>
     );
 }

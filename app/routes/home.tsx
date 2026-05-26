@@ -1,6 +1,8 @@
-import { useFeaturedTvShows } from "@/hooks/tv.hooks";
+import { useFeaturedMoviesAndTVShows } from "@/hooks/tv.hooks";
 import type { Route } from "./+types/home";
 import { HeroFeaturedCarousel } from "@/components/HeroFeaturedCarousel";
+import { MediaCarousel } from "@/components/MediaCarousel";
+import { isMovieResult } from "@/utils/media-string-helpers";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -10,7 +12,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-    const { data, isPending, isError } = useFeaturedTvShows();
+    const { data: featuredItems, isPending, isError } = useFeaturedMoviesAndTVShows();
+    const featuredMovies = featuredItems?.filter((item) => isMovieResult(item));
+    const featuredTVShows = featuredItems?.filter((item) => !isMovieResult(item));
 
     if (isPending) {
         return <main className="p-4 h-[90vh]">Loading...</main>;
@@ -20,11 +24,23 @@ export default function Home() {
         return <main className="p-4 h-[90vh]">Error occurred while fetching featured shows.</main>;
     }
 
-    const featuredItems = data.results.slice(0, 7) || [];
-
     return (
         <main className="h-[90vh]">
             <HeroFeaturedCarousel items={featuredItems} mediaType="tv" />
+            <section className="my-16">
+                <MediaCarousel
+                    mediaData={featuredMovies ?? []}
+                    options={{ loop: true }}
+                    title="Featured Movies"
+                />
+            </section>
+            <section className="my-16">
+                <MediaCarousel
+                    mediaData={featuredTVShows ?? []}
+                    options={{ loop: true }}
+                    title="Featured TV Shows"
+                />
+            </section>
         </main>
     );
 }

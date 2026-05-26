@@ -1,10 +1,17 @@
-import { getDetails, getFeatured, getGenres, getVideos } from "@/api/media.api";
+import {
+    getDetails,
+    getFeatured,
+    getFeaturedMoviesAndTVShows,
+    getGenres,
+    getVideos,
+} from "@/api/media.api";
 import type { MediaType, MovieVideo } from "@/types/tmdb";
 import { queryOptions } from "@tanstack/react-query";
 
 export const mediaKeys = {
     all: ["media"] as const,
     byType: (mediaType: MediaType) => [...mediaKeys.all, mediaType] as const,
+    featuredMoviesAndTVShows: () => [...mediaKeys.all, "featuredMoviesAndTVShows"] as const,
     featured: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "featured"] as const,
     genres: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "genres"] as const,
     details: (mediaType: MediaType, id: string) =>
@@ -27,7 +34,12 @@ function pickBackgroundVideo(videos: MovieVideo[]): MovieVideo | undefined {
 }
 
 export const mediaQueries = {
-    featured: <T extends MediaType>(mediaType: T) =>
+    featuredMoviesAndTVShows: () =>
+        queryOptions({
+            queryKey: mediaKeys.featuredMoviesAndTVShows(),
+            queryFn: ({ signal }) => getFeaturedMoviesAndTVShows(signal),
+        }),
+    featured: (mediaType: MediaType) =>
         queryOptions({
             queryKey: mediaKeys.featured(mediaType),
             queryFn: ({ signal }) => getFeatured(mediaType, signal),

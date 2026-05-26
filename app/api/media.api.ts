@@ -19,11 +19,24 @@ export const getFeatured = <T extends MediaType>(mediaType: T, signal?: AbortSig
         { signal },
     );
 
-export const getDetails = <T extends MediaType>(
-    mediaType: T,
-    id: string,
-    signal?: AbortSignal,
-) => tmdbFetch<DetailsByType<T>>(`/${mediaType}/${id}`, { signal });
+export const getFeaturedMoviesAndTVShows = async (signal?: AbortSignal) => {
+    const [movies, tvShows] = await Promise.all([
+        tmdbFetch<PaginatedResponse<ResultByType<"movie">>>(
+            `/discover/movie?sort_by=popularity.desc`,
+            {
+                signal,
+            },
+        ),
+        tmdbFetch<PaginatedResponse<ResultByType<"tv">>>(`/discover/tv?sort_by=popularity.desc`, {
+            signal,
+        }),
+    ]);
+
+    return [...movies.results.slice(0, 7), ...tvShows.results.slice(0, 7)];
+};
+
+export const getDetails = <T extends MediaType>(mediaType: T, id: string, signal?: AbortSignal) =>
+    tmdbFetch<DetailsByType<T>>(`/${mediaType}/${id}`, { signal });
 
 export const getVideos = (mediaType: MediaType, id: string, signal?: AbortSignal) =>
     tmdbFetch<MovieVideosResponse>(`/${mediaType}/${id}/videos`, { signal });

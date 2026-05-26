@@ -43,3 +43,13 @@ body {
     min-width: 0;
   }
 }
+
+.media-carousel {
+  --slide-size: 300px;
+}
+
+.media-carousel .embla__slide {
+  flex: 0 0 var(--slide-size);
+  height: 14rem;
+  margin-right: 1rem;
+}
