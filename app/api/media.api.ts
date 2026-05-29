@@ -1,16 +1,14 @@
 import { tmdbFetch } from "@/api/client";
 import type {
+    DetailsWithAppendByType,
     GenreListResponse,
     MediaType,
-    Movie,
     MovieResult,
     MovieVideosResponse,
     PaginatedResponse,
     TvResult,
-    TvShow,
 } from "@/types/tmdb";
 
-type DetailsByType<T extends MediaType> = T extends "movie" ? Movie : TvShow;
 type ResultByType<T extends MediaType> = T extends "movie" ? MovieResult : TvResult;
 
 export const getFeatured = <T extends MediaType>(mediaType: T, signal?: AbortSignal) =>
@@ -28,7 +26,12 @@ export const getTrendingTop10 = (mediaType: MediaType, signal?: AbortSignal) =>
     );
 
 export const getDetails = <T extends MediaType>(mediaType: T, id: string, signal?: AbortSignal) =>
-    tmdbFetch<DetailsByType<T>>(`/${mediaType}/${id}`, { signal });
+    tmdbFetch<DetailsWithAppendByType<T>>(
+        `/${mediaType}/${id}?append_to_response=credits,reviews,recommendations,images,videos`,
+        {
+            signal,
+        },
+    );
 
 export const getVideos = (mediaType: MediaType, id: string, signal?: AbortSignal) =>
     tmdbFetch<MovieVideosResponse>(`/${mediaType}/${id}/videos`, { signal });

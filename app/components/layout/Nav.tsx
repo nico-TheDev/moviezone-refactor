@@ -5,7 +5,7 @@ import { SearchBar } from "../SearchBar";
 export function Nav() {
     return (
         <nav className="absolute top-0 left-0 w-full z-[999]">
-            <div className="h-[10vh] max-w-7xl w-full mx-auto p-4 flex items-center justify-between">
+            <div className="h-[10vh] max-w-[85%] w-full mx-auto p-4 flex items-center justify-between">
                 <NavLink to="/">
                     <img src="/img/logo.png" alt="MovieZone Logo" className="h-6 sm:h-10" />
                 </NavLink>

@@ -7,9 +7,10 @@ const YT_ORIGIN = "https://www.youtube-nocookie.com";
 interface IProps {
     backdropPath: string | null | undefined;
     youtubeId: string | undefined;
+    children?: React.ReactNode;
 }
 
-export default function VideoBackground({ backdropPath, youtubeId }: IProps) {
+export default function VideoBackground({ backdropPath, youtubeId, children }: IProps) {
     const [activated, setActivated] = useState(false);
     const [muted, setMuted] = useState(true);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -79,6 +80,8 @@ export default function VideoBackground({ backdropPath, youtubeId }: IProps) {
                     {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>
             )}
+
+            {children}
         </section>
     );
 }

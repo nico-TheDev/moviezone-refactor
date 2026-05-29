@@ -7,6 +7,7 @@ import { API } from "@/constants/api";
 import { ChevronLeft, ChevronRight, StarIcon } from "lucide-react";
 import { cn } from "@/utils/css-helpers";
 import { MediaCarouselSkeleton } from "./MediaCarouselSkeleton";
+import { useNavigate } from "react-router";
 
 type UsePrevNextButtonsType = {
     prevBtnDisabled: boolean;
@@ -85,6 +86,7 @@ export const NextButton = ({
 
 function MediaCard({
     media,
+    mediaType,
     orientation,
     topLabelEnabled = false,
     index,
@@ -93,14 +95,18 @@ function MediaCard({
     orientation: "portrait" | "landscape";
     topLabelEnabled?: boolean;
     index: number;
+    mediaType: MediaType;
 }) {
+    const navigate = useNavigate();
+
     return (
         <div
             className={cn(
                 "min-w-0 group/card-img cursor-pointer pr-4",
                 orientation === "landscape" ? "flex-[0_0_300px]" : "flex-[0_0_250px]",
             )}
-            key={media.id}>
+            key={media.id}
+            onClick={() => navigate(`/media/${mediaType}/${media.id}`)}>
             <div
                 className={cn(
                     "overflow-hidden mb-2 rounded-md cursor-pointer relative",
@@ -156,6 +162,7 @@ interface IProps {
     mediaType: MediaType;
     setMediaType: (mediaType: MediaType) => void;
     isLoading?: boolean;
+    showMediaTypeSelector?: boolean;
 }
 
 export function MediaCarousel({
@@ -167,6 +174,7 @@ export function MediaCarousel({
     mediaType = "movie",
     setMediaType,
     isLoading,
+    showMediaTypeSelector = true,
 }: IProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
@@ -178,14 +186,18 @@ export function MediaCarousel({
     }
 
     return (
-        <div className="max-w-[90%] mx-auto group/carousel">
+        <div className="w-full mx-auto group/carousel">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold  text-white flex items-center gap-2">
                     <span className="w-1 bg-primary block h-8" />
                     {title}
                 </h2>
 
-                <div className="flex items-center border rounded-md border-primary">
+                <div
+                    className={cn(
+                        " items-center border rounded-md border-primary",
+                        showMediaTypeSelector ? "flex" : "hidden",
+                    )}>
                     <button
                         className={cn(
                             "font-medium px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer border-r border-primary",
@@ -214,6 +226,7 @@ export function MediaCarousel({
                                 orientation={orientation}
                                 topLabelEnabled={topLabelEnabled}
                                 index={index}
+                                mediaType={mediaType}
                             />
                         ))}
                     </div>

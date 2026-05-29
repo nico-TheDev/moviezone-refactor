@@ -11,6 +11,17 @@ export type Person = ResponseBody<"person-details">;
 // --- Movie videos ---
 export type MovieVideosResponse = ResponseBody<"movie-videos">;
 export type MovieVideo = NonNullable<MovieVideosResponse["results"]>[number];
+export type TvVideosResponse = ResponseBody<"tv-series-videos">;
+
+// --- Appended details payloads ---
+export type MovieCreditsResponse = ResponseBody<"movie-credits">;
+export type TvCreditsResponse = ResponseBody<"tv-series-credits">;
+export type MovieReviewsResponse = ResponseBody<"movie-reviews">;
+export type TvReviewsResponse = ResponseBody<"tv-series-reviews">;
+export type MovieRecommendationsResponse = ResponseBody<"movie-recommendations">;
+export type TvRecommendationsResponse = ResponseBody<"tv-series-recommendations">;
+export type MovieImagesResponse = ResponseBody<"movie-images">;
+export type TvImagesResponse = ResponseBody<"tv-series-images">;
 
 // --- List item types ---
 export type MovieResult = NonNullable<ResponseBody<"discover-movie">["results"]>[number];
@@ -33,6 +44,26 @@ export type PaginatedResponse<T> = {
 
 // --- Media type discriminator ---
 export type MediaType = "movie" | "tv";
+
+type DetailsByType<T extends MediaType> = T extends "movie" ? Movie : TvShow;
+
+type AppendedByType<T extends MediaType> = T extends "movie"
+    ? {
+          credits?: MovieCreditsResponse;
+          reviews?: MovieReviewsResponse;
+          recommendations?: MovieRecommendationsResponse;
+          images?: MovieImagesResponse;
+          videos?: MovieVideosResponse;
+      }
+    : {
+          credits?: TvCreditsResponse;
+          reviews?: TvReviewsResponse;
+          recommendations?: TvRecommendationsResponse;
+          images?: TvImagesResponse;
+          videos?: TvVideosResponse;
+      };
+
+export type DetailsWithAppendByType<T extends MediaType> = DetailsByType<T> & AppendedByType<T>;
 
 // --- Multi-search discriminated union ---
 export type MultiSearchResult =

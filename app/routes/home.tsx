@@ -61,7 +61,7 @@ function TrendingMedia() {
 function TopRatedMedia() {
     const topRatedMovies = useTopRated("movie");
     const topRatedTvShows = useTopRated("tv");
-    const [mediaType, setMediaType] = useState<MediaType>("movie");
+    const [mediaType, setMediaType] = useState<MediaType>("tv");
 
     return (
         <MediaCarousel
@@ -114,18 +114,20 @@ export default function Home() {
                 )}
             </main>
 
-            <section className="my-16">
-                <TrendingMedia />
-            </section>
-            <section className="my-16">
-                <FeatureMedia />
-            </section>
-            <section className="my-16">
-                <TopRatedMedia />
-            </section>
-            <section className="my-16">
-                <PopularMedia />
-            </section>
+            <div className="max-w-[85%] mx-auto">
+                <section className="my-16">
+                    <TrendingMedia />
+                </section>
+                <section className="my-16">
+                    <FeatureMedia />
+                </section>
+                <section className="my-16">
+                    <TopRatedMedia />
+                </section>
+                <section className="my-16">
+                    <PopularMedia />
+                </section>
+            </div>
         </>
     );
 }

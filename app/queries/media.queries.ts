@@ -7,7 +7,7 @@ import {
     getTrendingTop10,
     getVideos,
 } from "@/api/media.api";
-import type { MediaType, MovieVideo } from "@/types/tmdb";
+import type { DetailsWithAppendByType, MediaType, MovieVideo } from "@/types/tmdb";
 import { queryOptions } from "@tanstack/react-query";
 
 export const mediaKeys = {
@@ -55,6 +55,14 @@ export const mediaQueries = {
         queryOptions({
             queryKey: mediaKeys.details(mediaType, id),
             queryFn: ({ signal }) => getDetails(mediaType, id, signal),
+            select: (data: DetailsWithAppendByType<MediaType>) => ({
+                ...data,
+                credits: data?.credits?.cast?.slice(0, 10),
+                reviews: data?.reviews?.results?.slice(0, 10),
+                recommendations: data?.recommendations?.results?.slice(0, 10),
+                images: data?.images?.backdrops?.slice(0, 10),
+                videos: pickBackgroundVideo(data?.videos?.results ?? []),
+            }),
         }),
     videos: (mediaType: MediaType, id: string) =>
         queryOptions({
