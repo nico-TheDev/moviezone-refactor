@@ -19,10 +19,13 @@ export const getFeatured = <T extends MediaType>(mediaType: T, signal?: AbortSig
         { signal },
     );
 
-export const getTrendingTop10 = (signal?: AbortSignal) =>
-    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(`/trending/all/day?language=en-US`, {
-        signal,
-    });
+export const getTrendingTop10 = (mediaType: MediaType, signal?: AbortSignal) =>
+    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(
+        `/trending/${mediaType}/day?language=en-US`,
+        {
+            signal,
+        },
+    );
 
 export const getDetails = <T extends MediaType>(mediaType: T, id: string, signal?: AbortSignal) =>
     tmdbFetch<DetailsByType<T>>(`/${mediaType}/${id}`, { signal });
@@ -32,3 +35,9 @@ export const getVideos = (mediaType: MediaType, id: string, signal?: AbortSignal
 
 export const getGenres = (mediaType: MediaType, signal?: AbortSignal) =>
     tmdbFetch<GenreListResponse>(`/genre/${mediaType}/list?language=en`, { signal });
+
+export const getTopRated = (mediaType: MediaType, signal?: AbortSignal) =>
+    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(`/${mediaType}/top_rated`, { signal });
+
+export const getPopular = (mediaType: MediaType, signal?: AbortSignal) =>
+    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(`/${mediaType}/popular`, { signal });

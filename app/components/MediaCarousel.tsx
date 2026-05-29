@@ -1,4 +1,4 @@
-import type { Movie, MovieResult, TvResult, TvShow } from "@/types/tmdb";
+import type { MediaType, Movie, MovieResult, TvResult, TvShow } from "@/types/tmdb";
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
 import type { EmblaCarouselType, EmblaOptionsType } from "embla-carousel";
@@ -6,6 +6,7 @@ import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
 import { API } from "@/constants/api";
 import { ChevronLeft, ChevronRight, StarIcon } from "lucide-react";
 import { cn } from "@/utils/css-helpers";
+import { MediaCarouselSkeleton } from "./MediaCarouselSkeleton";
 
 type UsePrevNextButtonsType = {
     prevBtnDisabled: boolean;
@@ -152,6 +153,9 @@ interface IProps {
     title: string;
     orientation?: "portrait" | "landscape";
     topLabelEnabled?: boolean;
+    mediaType: MediaType;
+    setMediaType: (mediaType: MediaType) => void;
+    isLoading?: boolean;
 }
 
 export function MediaCarousel({
@@ -160,18 +164,46 @@ export function MediaCarousel({
     title,
     orientation = "landscape",
     topLabelEnabled = false,
+    mediaType = "movie",
+    setMediaType,
+    isLoading,
 }: IProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
     const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } =
         usePrevNextButtons(emblaApi);
 
+    if (isLoading) {
+        return <MediaCarouselSkeleton title={title} orientation={orientation} />;
+    }
+
     return (
         <div className="max-w-[90%] mx-auto group/carousel">
-            <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
-                <span className="w-1 bg-primary block h-8" />
-                {title}
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold  text-white flex items-center gap-2">
+                    <span className="w-1 bg-primary block h-8" />
+                    {title}
+                </h2>
+
+                <div className="flex items-center border rounded-md border-primary">
+                    <button
+                        className={cn(
+                            "font-medium px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer border-r border-primary",
+                            mediaType === "movie" && "bg-primary text-white",
+                        )}
+                        onClick={() => setMediaType("movie")}>
+                        Movies
+                    </button>
+                    <button
+                        className={cn(
+                            "px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer",
+                            mediaType === "tv" && "bg-primary text-white",
+                        )}
+                        onClick={() => setMediaType("tv")}>
+                        Series
+                    </button>
+                </div>
+            </div>
             <div className="relative">
                 <div className="overflow-hidden" ref={emblaRef}>
                     <div className="flex touch-pan-y touch-pinch-zoom">

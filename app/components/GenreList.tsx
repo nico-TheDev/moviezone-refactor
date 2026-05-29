@@ -39,7 +39,7 @@ function GenreList({ genreIds, mediaType }: IProps) {
     }
 
     return (
-        <span className="inline-flex gap-1 text-sm text-gray-300">
+        <div className="flex gap-1 text-sm text-gray-300">
             {visibleGenreIds.map((id) => (
                 <NavLink
                     key={id}
@@ -48,7 +48,7 @@ function GenreList({ genreIds, mediaType }: IProps) {
                     {genres.get(id)}
                 </NavLink>
             ))}
-        </span>
+        </div>
     );
 }
 

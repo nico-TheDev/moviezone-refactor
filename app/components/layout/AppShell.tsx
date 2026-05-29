@@ -4,7 +4,7 @@ import { Nav } from "./Nav";
 
 export default function AppShell() {
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col mx-auto">
             <Nav />
             <div className="flex-1">
                 <Outlet />

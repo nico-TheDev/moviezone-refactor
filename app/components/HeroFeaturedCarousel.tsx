@@ -21,7 +21,9 @@ function HeroFeaturedItem({ mediaData }: { mediaData: MovieResult | TvResult }) 
 
             <div className="relative flex max-w-7xl w-full mx-auto h-full z-10 flex-col justify-center pt-50">
                 <div className="p-4">
-                    <h3 className="text-4xl font-display mb-4 max-w-2xl">{getTitle(mediaData)}</h3>
+                    <h3 className="text-2xl md:text-4xl font-display mb-4 max-w-2xl">
+                        {getTitle(mediaData)}
+                    </h3>
                     <p className="flex items-center gap-2 text-sm text-gray-300 font-light mb-2">
                         <span className="inline-flex items-center text-primary gap-2 font-medium">
                             <StarIcon

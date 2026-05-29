@@ -7,10 +7,10 @@ export function Nav() {
         <nav className="absolute top-0 left-0 w-full z-[999]">
             <div className="h-[10vh] max-w-7xl w-full mx-auto p-4 flex items-center justify-between">
                 <NavLink to="/">
-                    <img src="/img/logo.png" alt="MovieZone Logo" className="h-10" />
+                    <img src="/img/logo.png" alt="MovieZone Logo" className="h-6 sm:h-10" />
                 </NavLink>
 
-                <div className="flex items-center gap-6 text-white">
+                <div className="items-center gap-6 text-white hidden sm:flex">
                     <SearchBar />
 
                     <ul className="flex items-center gap-4 ">
