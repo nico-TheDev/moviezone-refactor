@@ -20,14 +20,16 @@ export default function Home() {
     const { trending, featuredMovies, featuredTvShows } = useHomePageData();
 
     return (
-        <main className="h-[90vh]">
-            {trending.isPending ? (
-                <HeroFeaturedSkeleton />
-            ) : trending.isError ? (
-                <SectionError message="Failed to load featured shows." />
-            ) : (
-                <HeroFeaturedCarousel items={trending.data ?? []} mediaType="tv" />
-            )}
+        <>
+            <main className="h-[90vh] mb-40">
+                {trending.isPending ? (
+                    <HeroFeaturedSkeleton />
+                ) : trending.isError ? (
+                    <SectionError message="Failed to load featured shows." />
+                ) : (
+                    <HeroFeaturedCarousel items={trending.data ?? []} mediaType="tv" />
+                )}
+            </main>
 
             <section className="my-16">
                 {trending.isPending ? (
@@ -72,6 +74,6 @@ export default function Home() {
                     />
                 )}
             </section>
-        </main>
+        </>
     );
 }

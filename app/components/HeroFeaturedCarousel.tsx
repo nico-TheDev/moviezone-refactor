@@ -67,13 +67,11 @@ export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
     const [emblaRef] = useEmblaCarousel({ loop: true });
 
     return (
-        <div>
-            <div className="overflow-hidden" ref={emblaRef}>
-                <div className="flex touch-pan-y touch-pinch-zoom w-screen">
-                    {(items as FeaturedItem[]).map((item) => (
-                        <HeroFeaturedItem key={item.id} mediaData={item} />
-                    ))}
-                </div>
+        <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex touch-pan-y touch-pinch-zoom w-screen">
+                {(items as FeaturedItem[]).map((item) => (
+                    <HeroFeaturedItem key={item.id} mediaData={item} />
+                ))}
             </div>
         </div>
     );
