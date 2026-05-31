@@ -71,7 +71,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                             <h3 className="text-2xl md:text-4xl font-display mb-4 max-w-2xl">
                                 {getTitle(mediaData)}
                             </h3>
-                            <p className="flex items-center gap-2 text-sm text-gray-300 font-light mb-4">
+                            <p className="flex items-center gap-4 text-sm text-gray-300 font-light mb-4">
                                 <span className="inline-flex items-center text-primary gap-2 font-medium">
                                     <StarIcon
                                         size={20}
@@ -80,13 +80,9 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                                     />
                                     {mediaData.vote_average.toFixed(2)}
                                 </span>
-                                •<span className="">{getReleaseYear(mediaData)}</span>•
-                                {mediaData.runtime && (
+                                {<span className="">{getReleaseYear(mediaData)}</span>}
+                                {isMovie(mediaData) && mediaData.runtime && (
                                     <span className="">{mediaData.runtime} minutes</span>
-                                )}
-                                •
-                                {mediaData.release_date && (
-                                    <span className="">{getReleaseYear(mediaData)}</span>
                                 )}
                             </p>
                             <div className="mb-4">
@@ -95,7 +91,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                                     mediaType={mediaType}
                                 />
                             </div>
-                            <p className="max-w-xl line-clamp-4 text-sm mb-6">
+                            <p className="max-w-xl line-clamp-6 text-sm mb-6">
                                 {mediaData.overview}
                             </p>
 

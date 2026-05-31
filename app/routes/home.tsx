@@ -71,7 +71,6 @@ function TopRatedMedia() {
             options={{ loop: true, dragFree: true }}
             title="Top Rated"
             orientation="landscape"
-            topLabelEnabled
             mediaType={mediaType}
             setMediaType={setMediaType}
             isLoading={mediaType === "movie" ? topRatedMovies.isPending : topRatedTvShows.isPending}
@@ -92,7 +91,6 @@ function PopularMedia() {
             options={{ loop: true, dragFree: true }}
             title="Popular"
             orientation="landscape"
-            topLabelEnabled
             mediaType={mediaType}
             setMediaType={setMediaType}
             isLoading={mediaType === "movie" ? popularMovies.isPending : popularTvShows.isPending}
