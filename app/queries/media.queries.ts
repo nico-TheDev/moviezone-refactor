@@ -60,7 +60,7 @@ export const mediaQueries = {
                 credits: data?.credits?.cast?.slice(0, 10),
                 reviews: data?.reviews?.results?.slice(0, 10),
                 recommendations: data?.recommendations?.results?.slice(0, 10),
-                images: data?.images?.backdrops?.slice(0, 10),
+                images: data?.images?.logos?.slice(0, 10),
                 videos: pickBackgroundVideo(data?.videos?.results ?? []),
             }),
         }),

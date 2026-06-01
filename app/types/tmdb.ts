@@ -23,6 +23,12 @@ export type TvRecommendationsResponse = ResponseBody<"tv-series-recommendations"
 export type MovieImagesResponse = ResponseBody<"movie-images">;
 export type TvImagesResponse = ResponseBody<"tv-series-images">;
 
+export type MovieCastMember = NonNullable<MovieCreditsResponse["cast"]>[number];
+export type MovieCrewMember = NonNullable<MovieCreditsResponse["crew"]>[number];
+export type TvCastMember = NonNullable<TvCreditsResponse["cast"]>[number];
+export type TvCrewMember = NonNullable<TvCreditsResponse["crew"]>[number];
+export type CastMember = MovieCastMember | TvCastMember;
+
 // --- List item types ---
 export type MovieResult = NonNullable<ResponseBody<"discover-movie">["results"]>[number];
 export type TvResult = NonNullable<ResponseBody<"discover-tv">["results"]>[number];
