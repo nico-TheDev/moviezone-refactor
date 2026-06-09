@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/Skeleton";
 import { mediaQueries } from "@/queries/media.queries";
 import type { MediaType } from "@/types/tmdb";
+import { genreBrowsePath } from "@/utils/genre-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router";
 
@@ -39,15 +40,18 @@ function GenreList({ genreIds, mediaType }: IProps) {
     }
 
     return (
-        <div className="flex gap-1 text-sm text-gray-300">
-            {visibleGenreIds.map((id) => (
-                <NavLink
-                    key={id}
-                    to={`/${mediaType}/genre/${id}`}
-                    className="px-2 py-1 text-xs font-light bg-primary text-white rounded hover:bg-primary-hover">
-                    {genres.get(id)}
-                </NavLink>
-            ))}
+        <div className="flex flex-wrap gap-1 text-sm text-gray-300">
+            {visibleGenreIds.map((id) => {
+                const name = genres.get(id) ?? "Unknown";
+                return (
+                    <NavLink
+                        key={id}
+                        to={genreBrowsePath(mediaType, id, name)}
+                        className="px-2 py-1 text-xs font-light bg-primary text-white rounded hover:bg-primary-hover">
+                        {name}
+                    </NavLink>
+                );
+            })}
         </div>
     );
 }
