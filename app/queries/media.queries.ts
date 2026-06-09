@@ -57,9 +57,9 @@ export const mediaQueries = {
             queryFn: ({ signal }) => getDetails(mediaType, id, signal),
             select: (data: DetailsWithAppendByType<MediaType>) => ({
                 ...data,
-                credits: data?.credits?.cast?.slice(0, 10),
-                reviews: data?.reviews?.results?.slice(0, 10),
-                recommendations: data?.recommendations?.results?.slice(0, 10),
+                credits: data?.credits?.cast?.slice(0, 20),
+                reviews: data?.reviews?.results?.slice(0, 5),
+                recommendations: data?.recommendations?.results?.slice(0, 12),
                 images: data?.images?.logos?.slice(0, 10),
                 videos: pickBackgroundVideo(data?.videos?.results ?? []),
             }),
