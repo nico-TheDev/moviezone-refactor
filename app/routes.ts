@@ -7,6 +7,7 @@ export default [
         route("list/:mediaType/:category", "routes/list.tsx"),
         route(":type/genre/:slug/:id", "routes/genre-browse.tsx"),
         route("person/:personId", "routes/person.tsx"),
+        route("search/:query", "routes/search.tsx"),
         route("error/:message", "routes/error-page.tsx"),
     ]),
 ] satisfies RouteConfig;
