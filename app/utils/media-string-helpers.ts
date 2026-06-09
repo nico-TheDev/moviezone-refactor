@@ -14,3 +14,10 @@ export function getReleaseYear(item: FeaturedItem): string | undefined {
     const date = isMovieResult(item) ? item.release_date : item.first_air_date;
     return date?.slice(0, 4);
 }
+
+export function assertMediaType(value: string): MediaType {
+    if (value !== "movie" && value !== "tv") {
+        throw new Response(`Unsupported media type: ${value}`, { status: 404 });
+    }
+    return value;
+}

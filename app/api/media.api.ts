@@ -44,3 +44,20 @@ export const getTopRated = (mediaType: MediaType, signal?: AbortSignal) =>
 
 export const getPopular = (mediaType: MediaType, signal?: AbortSignal) =>
     tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(`/${mediaType}/popular`, { signal });
+
+export const getListPage = (path: string, signal?: AbortSignal) =>
+    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(path, { signal });
+
+export const getDiscoverByGenre = (
+    mediaType: MediaType,
+    genreId: string,
+    page: number,
+    signal?: AbortSignal,
+) =>
+    tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(
+        `/discover/${mediaType}?with_genres=${genreId}&page=${page}&language=en-US&sort_by=popularity.desc`,
+        { signal },
+    );
+
+export const getAllVideos = (mediaType: MediaType, id: string, signal?: AbortSignal) =>
+    tmdbFetch<MovieVideosResponse>(`/${mediaType}/${id}/videos`, { signal });
