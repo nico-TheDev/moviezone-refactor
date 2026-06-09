@@ -6,5 +6,6 @@ export default [
         route("media/:type/:movieId", "routes/media-details.tsx"),
         route("list/:mediaType/:category", "routes/list.tsx"),
         route(":type/genre/:slug/:id", "routes/genre-browse.tsx"),
+        route("error/:message", "routes/error-page.tsx"),
     ]),
 ] satisfies RouteConfig;

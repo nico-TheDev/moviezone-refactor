@@ -1,5 +1,6 @@
 import {
     isRouteErrorResponse,
+    Link,
     Links,
     Meta,
     Outlet,
@@ -72,14 +73,21 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     }
 
     return (
-        <main className="pt-16 p-4 container mx-auto">
-            <h1>{message}</h1>
-            <p>{details}</p>
-            {stack && (
-                <pre className="w-full p-4 overflow-x-auto">
-                    <code>{stack}</code>
-                </pre>
-            )}
+        <main className="min-h-screen flex items-center justify-center bg-gray-950 text-white p-4">
+            <div className="text-center max-w-md">
+                <h1 className="text-4xl font-bold mb-4 text-primary">{message}</h1>
+                <p className="text-gray-300 mb-8">{details}</p>
+                <Link
+                    to="/"
+                    className="inline-block px-6 py-3 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors">
+                    Return to Home
+                </Link>
+                {stack && (
+                    <pre className="mt-8 w-full p-4 overflow-x-auto text-left text-xs text-gray-500 bg-gray-900 rounded-lg">
+                        <code>{stack}</code>
+                    </pre>
+                )}
+            </div>
         </main>
     );
 }
