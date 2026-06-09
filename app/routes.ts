@@ -10,6 +10,7 @@ export default [
         route("search/:query", "routes/search.tsx"),
         route("login", "routes/login.tsx"),
         route("login/callback", "routes/login-callback.tsx"),
+        route("profile", "routes/profile.tsx"),
         route("error/:message", "routes/error-page.tsx"),
     ]),
 ] satisfies RouteConfig;
