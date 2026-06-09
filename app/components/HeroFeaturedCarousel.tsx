@@ -5,10 +5,12 @@ import { InfoIcon, StarIcon } from "lucide-react";
 import GenreList from "@/components/GenreList";
 import { useNavigate } from "react-router";
 import { getReleaseYear, getTitle, isMovieResult } from "@/utils/media-string-helpers";
+import { useCallback, useEffect } from "react";
+
+const AUTOPLAY_DELAY = 5000;
 
 function HeroFeaturedItem({ mediaData }: { mediaData: MovieResult | TvResult }) {
     const navigate = useNavigate();
-
     const mediaType = isMovieResult(mediaData) ? "movie" : "tv";
 
     return (
@@ -24,7 +26,7 @@ function HeroFeaturedItem({ mediaData }: { mediaData: MovieResult | TvResult }) 
                     <h3 className="text-2xl md:text-4xl font-display mb-4 max-w-2xl">
                         {getTitle(mediaData)}
                     </h3>
-                    <p className="flex items-center gap-2 text-sm text-gray-300 font-light mb-2">
+                    <p className="flex items-center gap-2 text-sm text-gray-300 font-light mb-2 flex-wrap">
                         <span className="inline-flex items-center text-primary gap-2 font-medium">
                             <StarIcon
                                 size={20}
@@ -33,8 +35,7 @@ function HeroFeaturedItem({ mediaData }: { mediaData: MovieResult | TvResult }) 
                             />
                             {mediaData.vote_average.toFixed(2)}
                         </span>
-                        •<span className="">{getReleaseYear(mediaData)}</span>
-                        •
+                        •<span>{getReleaseYear(mediaData)}</span>•
                         <GenreList genreIds={mediaData.genre_ids} mediaType={mediaType} />
                     </p>
 
@@ -66,7 +67,18 @@ interface IProps {
 type FeaturedItem = MovieResult | TvResult;
 
 export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
-    const [emblaRef] = useEmblaCarousel({ loop: true });
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+
+    const scrollNext = useCallback(() => {
+        if (!emblaApi) return;
+        emblaApi.scrollNext();
+    }, [emblaApi]);
+
+    useEffect(() => {
+        if (!emblaApi || items.length <= 1) return;
+        const timer = setInterval(scrollNext, AUTOPLAY_DELAY);
+        return () => clearInterval(timer);
+    }, [emblaApi, scrollNext, items.length]);
 
     return (
         <div className="overflow-hidden" ref={emblaRef}>

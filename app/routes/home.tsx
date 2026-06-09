@@ -5,6 +5,7 @@ import { MediaCarousel } from "@/components/MediaCarousel";
 import { useFeaturedMedia, usePopular, useTopRated, useTrendingTop10 } from "@/hooks/media.hooks";
 import type { MediaType } from "@/types/tmdb";
 import { useState } from "react";
+import { motion } from "motion/react";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -113,18 +114,22 @@ export default function Home() {
             </main>
 
             <div className="max-w-[85%] mx-auto">
-                <section className="my-16">
-                    <TrendingMedia />
-                </section>
-                <section className="my-16">
-                    <FeatureMedia />
-                </section>
-                <section className="my-16">
-                    <TopRatedMedia />
-                </section>
-                <section className="my-16">
-                    <PopularMedia />
-                </section>
+                {[
+                    { key: "trending", content: <TrendingMedia /> },
+                    { key: "featured", content: <FeatureMedia /> },
+                    { key: "toprated", content: <TopRatedMedia /> },
+                    { key: "popular", content: <PopularMedia /> },
+                ].map(({ key, content }, index) => (
+                    <motion.section
+                        key={key}
+                        className="my-16"
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-80px" }}
+                        transition={{ duration: 0.4, delay: index * 0.05 }}>
+                        {content}
+                    </motion.section>
+                ))}
             </div>
         </>
     );
