@@ -1,15 +1,18 @@
+import { ToastProvider } from "@/components/ui/Toast";
 import { Outlet } from "react-router";
 import { Footer } from "./Footer";
 import { Nav } from "./Nav";
 
 export default function AppShell() {
     return (
-        <div className="min-h-screen flex flex-col mx-auto">
-            <Nav />
-            <div className="flex-1">
-                <Outlet />
+        <ToastProvider>
+            <div className="min-h-screen flex flex-col mx-auto">
+                <Nav />
+                <div className="flex-1">
+                    <Outlet />
+                </div>
+                <Footer />
             </div>
-            <Footer />
-        </div>
+        </ToastProvider>
     );
 }

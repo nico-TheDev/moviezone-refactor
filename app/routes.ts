@@ -8,6 +8,8 @@ export default [
         route(":type/genre/:slug/:id", "routes/genre-browse.tsx"),
         route("person/:personId", "routes/person.tsx"),
         route("search/:query", "routes/search.tsx"),
+        route("login", "routes/login.tsx"),
+        route("login/callback", "routes/login-callback.tsx"),
         route("error/:message", "routes/error-page.tsx"),
     ]),
 ] satisfies RouteConfig;
