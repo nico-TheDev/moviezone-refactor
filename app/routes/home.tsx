@@ -2,8 +2,9 @@ import type { Route } from "./+types/home";
 import { HeroFeaturedCarousel } from "@/components/HeroFeaturedCarousel";
 import { HeroFeaturedSkeleton } from "@/components/HeroFeaturedSkeleton";
 import { MediaCarousel } from "@/components/MediaCarousel";
-import { useFeaturedMedia, usePopular, useTopRated, useTrendingTop10 } from "@/hooks/media.hooks";
+import { mediaQueries } from "@/queries/media.queries";
 import type { MediaType } from "@/types/tmdb";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion } from "motion/react";
 
@@ -19,9 +20,15 @@ function SectionError({ message }: { message: string }) {
 }
 
 function FeatureMedia() {
-    const featuredMovies = useFeaturedMedia("movie");
-    const featuredTvShows = useFeaturedMedia("tv");
     const [mediaType, setMediaType] = useState<MediaType>("movie");
+    const featuredMovies = useQuery({
+        ...mediaQueries.featured("movie"),
+        enabled: mediaType === "movie",
+    });
+    const featuredTvShows = useQuery({
+        ...mediaQueries.featured("tv"),
+        enabled: mediaType === "tv",
+    });
 
     return (
         <MediaCarousel
@@ -39,9 +46,15 @@ function FeatureMedia() {
 }
 
 function TrendingMedia() {
-    const trendingMovies = useTrendingTop10("movie");
-    const trendingTvShows = useTrendingTop10("tv");
     const [mediaType, setMediaType] = useState<MediaType>("movie");
+    const trendingMovies = useQuery({
+        ...mediaQueries.top10Trending("movie"),
+        enabled: mediaType === "movie",
+    });
+    const trendingTvShows = useQuery({
+        ...mediaQueries.top10Trending("tv"),
+        enabled: mediaType === "tv",
+    });
 
     return (
         <MediaCarousel
@@ -60,9 +73,15 @@ function TrendingMedia() {
 }
 
 function TopRatedMedia() {
-    const topRatedMovies = useTopRated("movie");
-    const topRatedTvShows = useTopRated("tv");
     const [mediaType, setMediaType] = useState<MediaType>("tv");
+    const topRatedMovies = useQuery({
+        ...mediaQueries.topRated("movie"),
+        enabled: mediaType === "movie",
+    });
+    const topRatedTvShows = useQuery({
+        ...mediaQueries.topRated("tv"),
+        enabled: mediaType === "tv",
+    });
 
     return (
         <MediaCarousel
@@ -80,9 +99,15 @@ function TopRatedMedia() {
 }
 
 function PopularMedia() {
-    const popularMovies = usePopular("movie");
-    const popularTvShows = usePopular("tv");
     const [mediaType, setMediaType] = useState<MediaType>("movie");
+    const popularMovies = useQuery({
+        ...mediaQueries.popular("movie"),
+        enabled: mediaType === "movie",
+    });
+    const popularTvShows = useQuery({
+        ...mediaQueries.popular("tv"),
+        enabled: mediaType === "tv",
+    });
 
     return (
         <MediaCarousel
@@ -100,10 +125,10 @@ function PopularMedia() {
 }
 
 export default function Home() {
-    const trendingMovies = useTrendingTop10("movie");
+    const trendingMovies = useQuery(mediaQueries.top10Trending("movie"));
     return (
         <>
-            <main className="h-[90vh] mb-40">
+            <main className="h-screen mb-16 md:mb-24">
                 {trendingMovies.isPending ? (
                     <HeroFeaturedSkeleton />
                 ) : trendingMovies.isError ? (

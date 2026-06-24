@@ -1,7 +1,7 @@
 import { NAV_MOVIE_LINKS, NAV_TV_LINKS } from "@/constants/lists";
 import { useAuthStore } from "@/stores/auth";
 import { Menu, UserCircle as UserIcon, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { SearchBar } from "../SearchBar";
 import { motion, AnimatePresence } from "motion/react";
@@ -55,7 +55,20 @@ function NavDropdown({
 export function Nav() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const hasSession = useAuthStore((s) => s.hasSession());
-    const logout = useAuthStore((s) => s.logout);
+
+    useEffect(() => {
+        if (!mobileOpen) return;
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setMobileOpen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => {
+            document.body.style.overflow = prev;
+            window.removeEventListener("keydown", onKey);
+        };
+    }, [mobileOpen]);
 
     return (
         <nav className="absolute top-0 left-0 w-full z-[999]">
@@ -149,23 +162,12 @@ export function Nav() {
                                 </div>
                                 <div className="border-t border-white/10 pt-4">
                                     {hasSession ? (
-                                        <>
-                                            <NavLink
-                                                to="/profile"
-                                                onClick={() => setMobileOpen(false)}
-                                                className="block py-2 hover:text-primary">
-                                                Profile
-                                            </NavLink>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    logout();
-                                                    setMobileOpen(false);
-                                                }}
-                                                className="block py-2 text-gray-400 hover:text-primary">
-                                                Logout
-                                            </button>
-                                        </>
+                                        <NavLink
+                                            to="/profile"
+                                            onClick={() => setMobileOpen(false)}
+                                            className="block py-2 hover:text-primary">
+                                            Profile
+                                        </NavLink>
                                     ) : (
                                         <>
                                             <NavLink
