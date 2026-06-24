@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "analyze": "vite build --mode analyze",
+    "generate:icons": "node scripts/generate-icons.mjs",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
@@ -49,7 +50,9 @@
     "jsdom": "^27.0.1",
     "msw": "^2.14.6",
     "rollup-plugin-visualizer": "^7.0.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.2.2",
+    "to-ico": "^1.1.5",
     "tsx": "^4.22.4",
     "typescript": "^5.9.3",
     "vite": "^8.0.3",
