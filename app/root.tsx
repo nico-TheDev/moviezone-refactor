@@ -12,6 +12,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import { OfflineFallback } from "@/components/OfflineFallback";
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -20,14 +21,16 @@ export const links: Route.LinksFunction = () => [
         href: "https://fonts.gstatic.com",
         crossOrigin: "anonymous",
     },
+    { rel: "preconnect", href: "https://image.tmdb.org" },
     {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap",
     },
     {
         rel: "icon",
         href: "/icons/favicon.ico",
     },
+    { rel: "apple-touch-icon", href: "/icons/icon-192.png" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -35,7 +38,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <html lang="en">
             <head>
                 <meta charSet="utf-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1, viewport-fit=cover"
+                />
+                <meta name="theme-color" content="#e50914" />
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+                <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
                 <Meta />
                 <Links />
             </head>
@@ -52,6 +61,7 @@ export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <Outlet />
+            <OfflineFallback />
         </QueryClientProvider>
     );
 }
