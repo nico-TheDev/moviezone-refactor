@@ -1,6 +1,8 @@
 import type { MovieVideo } from "@/types/tmdb";
 import { Modal } from "./ui/Modal";
 
+const YT_EMBED_ORIGIN = "https://www.youtube-nocookie.com";
+
 export function TrailerModal({
     open,
     onClose,
@@ -23,7 +25,7 @@ export function TrailerModal({
                             <p className="text-sm text-gray-300 mb-2">{video.name}</p>
                             <div className="aspect-video w-full rounded-md overflow-hidden">
                                 <iframe
-                                    src={`https://www.youtube.com/embed/${video.key}`}
+                                    src={`${YT_EMBED_ORIGIN}/embed/${video.key}`}
                                     title={video.name}
                                     className="w-full h-full"
                                     allowFullScreen
