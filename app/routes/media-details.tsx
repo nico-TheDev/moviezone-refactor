@@ -240,7 +240,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                 </VideoBackground>
             </main>
 
-            {tvShow?.seasons && <SeasonScroll seasons={tvShow.seasons} />}
+            {tvShow?.seasons && <SeasonScroll seasons={tvShow.seasons} showId={tvShow.id} />}
 
             <AnimatedSection className="my-12" delay={0}>
                 <div className="max-w-[85%] mx-auto py-6">

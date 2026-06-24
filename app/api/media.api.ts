@@ -6,6 +6,7 @@ import type {
     MovieResult,
     MovieVideosResponse,
     PaginatedResponse,
+    SeasonDetails,
     TvResult,
 } from "@/types/tmdb";
 
@@ -61,3 +62,10 @@ export const getDiscoverByGenre = (
 
 export const getAllVideos = (mediaType: MediaType, id: string, signal?: AbortSignal) =>
     tmdbFetch<MovieVideosResponse>(`/${mediaType}/${id}/videos`, { signal });
+
+export const getSeasonDetails = (
+    showId: string,
+    seasonNumber: string,
+    signal?: AbortSignal,
+) =>
+    tmdbFetch<SeasonDetails>(`/tv/${showId}/season/${seasonNumber}`, { signal });

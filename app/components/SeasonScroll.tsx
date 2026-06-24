@@ -2,10 +2,11 @@ import { API } from "@/constants/api";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import type { TvShow } from "@/types/tmdb";
 import useEmblaCarousel from "embla-carousel-react";
+import { Link } from "react-router";
 
 type Season = NonNullable<TvShow["seasons"]>[number];
 
-export function SeasonScroll({ seasons }: { seasons: Season[] }) {
+export function SeasonScroll({ seasons, showId }: { seasons: Season[]; showId: number }) {
     const filtered = seasons.filter((s) => s.season_number > 0);
     const [emblaRef] = useEmblaCarousel({ dragFree: true, align: "start" });
 
@@ -21,15 +22,16 @@ export function SeasonScroll({ seasons }: { seasons: Season[] }) {
                 <div className="overflow-hidden" ref={emblaRef}>
                     <div className="flex gap-4 touch-pan-y">
                         {filtered.map((season) => (
-                            <div
+                            <Link
                                 key={season.id}
-                                className="flex-[0_0_140px] min-w-0 shrink-0">
-                                <div className="aspect-[2/3] rounded-md overflow-hidden bg-gray-900 mb-2">
+                                to={`/media/tv/${showId}/season/${season.season_number}`}
+                                className="group flex-[0_0_140px] min-w-0 shrink-0 cursor-pointer">
+                                <div className="aspect-[2/3] rounded-md overflow-hidden bg-gray-900 mb-2 border border-transparent group-hover:border-primary transition-all duration-300">
                                     {season.poster_path ? (
                                         <img
                                             src={`${API.IMAGE_POSTER_URL}${season.poster_path}`}
                                             alt={season.name ?? `Season ${season.season_number}`}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             loading="lazy"
                                         />
                                     ) : (
@@ -38,13 +40,13 @@ export function SeasonScroll({ seasons }: { seasons: Season[] }) {
                                         </div>
                                     )}
                                 </div>
-                                <p className="text-sm text-white truncate">
+                                <p className="text-sm text-white truncate group-hover:text-primary transition-colors">
                                     {season.name ?? `Season ${season.season_number}`}
                                 </p>
                                 <p className="text-xs text-gray-400">
                                     {season.episode_count} episodes
                                 </p>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
