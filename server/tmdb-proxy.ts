@@ -24,9 +24,12 @@ export function injectSessionPath(path: string, c: Context): string {
     }
 
     if (!SESSION_PATH_RE.test(resolved)) return resolved;
-    if (resolved.includes("session_id=")) return resolved;
+    if (resolved.includes("session_id=") || resolved.includes("guest_session_id=")) return resolved;
 
     const separator = resolved.includes("?") ? "&" : "?";
+    if (guestSession && !userSession) {
+        return `${resolved}${separator}guest_session_id=${encodeURIComponent(guestSession)}`;
+    }
     return `${resolved}${separator}session_id=${encodeURIComponent(sessionId)}`;
 }
 
