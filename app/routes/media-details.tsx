@@ -16,10 +16,12 @@ import { SeasonScroll } from "@/components/SeasonScroll";
 import { TrailerModal } from "@/components/TrailerModal";
 import { MediaActionButtons } from "@/components/MediaActionButtons";
 import { RatingWidget } from "@/components/RatingWidget";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { getAccountStates } from "@/api/account.api";
 import { getAllVideos } from "@/api/media.api";
 import { useAuthStore } from "@/stores/auth";
-import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { useState, type ReactNode } from "react";
 import { Link, Navigate, redirect } from "react-router";
 
 function isMovie(media: Movie | TvShow): media is Movie {
@@ -55,16 +57,28 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     return null;
 }
 
-function CastCard({ cast }: { cast: CastMember }) {
+function HeroBlock({ children, index }: { children: ReactNode; index: number }) {
+    const reduce = useReducedMotion();
+    if (reduce) return <>{children}</>;
     return (
+        <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.06 }}>
+            {children}
+        </motion.div>
+    );
+}
+
+function CastCard({ cast, index }: { cast: CastMember; index: number }) {
+    const reduce = useReducedMotion();
+    const card = (
         <Link
             to={`/person/${cast.id}`}
             className="flex items-center gap-4 justify-between bg-gray-900/80 p-4 rounded-lg shadow-lg border border-transparent hover:border-primary transition-all duration-300">
             <img
                 src={
-                    cast.profile_path
-                        ? API.IMAGE_PROFILE_URL + cast.profile_path
-                        : "/img/logo.png"
+                    cast.profile_path ? API.IMAGE_PROFILE_URL + cast.profile_path : "/img/logo.png"
                 }
                 alt={cast.name}
                 className="size-12 rounded-full object-cover bg-gray-800"
@@ -74,6 +88,18 @@ function CastCard({ cast }: { cast: CastMember }) {
                 <p className="text-sm text-gray-300 truncate">{cast.character}</p>
             </div>
         </Link>
+    );
+
+    if (reduce) return card;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.04 }}>
+            {card}
+        </motion.div>
     );
 }
 
@@ -111,6 +137,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
 
     const logoImage = mediaData.images?.find((logo) => logo.iso_639_1 === "en");
     const tvShow = !isMovie(mediaData) ? mediaData : null;
+    let heroIndex = 0;
 
     return (
         <>
@@ -118,84 +145,96 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                 <VideoBackground
                     backdropPath={mediaData.backdrop_path}
                     youtubeId={mediaData.videos?.key}>
-                    <div className="relative z-10 max-w-[90%] mx-auto p-6 mt-[30rem]">
+                    <div className="relative z-10 max-w-[90%] mx-auto p-6 mt-[20rem]">
                         <div className="p-4">
-                            {logoImage ? (
-                                <div className="mb-4 w-50">
-                                    <img
-                                        src={API.IMAGE_BACKDROP_URL + logoImage.file_path}
-                                        alt=""
-                                        className={cn(
-                                            "w-full h-full object-cover max-h-24",
-                                            logoImage.aspect_ratio &&
-                                                `aspect-[${logoImage.aspect_ratio}]`,
-                                        )}
-                                        loading="lazy"
+                            <HeroBlock index={heroIndex++}>
+                                {logoImage ? (
+                                    <div className="mb-4 w-50">
+                                        <img
+                                            src={API.IMAGE_BACKDROP_URL + logoImage.file_path}
+                                            alt=""
+                                            className={cn(
+                                                "w-full h-full object-cover max-h-24",
+                                                logoImage.aspect_ratio &&
+                                                    `aspect-[${logoImage.aspect_ratio}]`,
+                                            )}
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                ) : (
+                                    <h3 className="text-2xl md:text-4xl font-display mb-4 max-w-2xl">
+                                        {getTitle(mediaData)}
+                                    </h3>
+                                )}
+                            </HeroBlock>
+                            {isMovie(mediaData) && mediaData.tagline && (
+                                <HeroBlock index={heroIndex++}>
+                                    <p className="text-gray-400 italic text-sm mb-2">
+                                        {mediaData.tagline}
+                                    </p>
+                                </HeroBlock>
+                            )}
+                            <HeroBlock index={heroIndex++}>
+                                <p className="flex flex-wrap items-center gap-4 text-sm text-gray-300 font-light mb-4">
+                                    <span className="inline-flex items-center text-primary gap-2 font-medium">
+                                        <StarIcon
+                                            size={20}
+                                            className="inline-block text-primary"
+                                            fill="currentColor"
+                                        />
+                                        {mediaData.vote_average.toFixed(2)}
+                                    </span>
+                                    <span>{getReleaseYear(mediaData)}</span>
+                                    {isMovie(mediaData) && mediaData.runtime && (
+                                        <span>{mediaData.runtime} min</span>
+                                    )}
+                                    {tvShow && (
+                                        <>
+                                            <span>
+                                                {tvShow.number_of_seasons} seasons ·{" "}
+                                                {tvShow.number_of_episodes} episodes
+                                            </span>
+                                            {tvShow.created_by && tvShow.created_by.length > 0 && (
+                                                <span>
+                                                    Created by{" "}
+                                                    {tvShow.created_by
+                                                        .map((c) => c.name)
+                                                        .join(", ")}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </p>
+                            </HeroBlock>
+                            <HeroBlock index={heroIndex++}>
+                                <div className="mb-4">
+                                    <GenreList
+                                        genreIds={mediaData.genres?.map((genre) => genre.id)}
+                                        mediaType={mediaType}
                                     />
                                 </div>
-                            ) : (
-                                <h3 className="text-2xl md:text-4xl font-display mb-4 max-w-2xl">
-                                    {getTitle(mediaData)}
-                                </h3>
-                            )}
-                            {isMovie(mediaData) && mediaData.tagline && (
-                                <p className="text-gray-400 italic text-sm mb-2">
-                                    {mediaData.tagline}
+                            </HeroBlock>
+                            <HeroBlock index={heroIndex++}>
+                                <p className="max-w-xl line-clamp-5 text-sm mb-6">
+                                    {mediaData.overview}
                                 </p>
-                            )}
-                            <p className="flex flex-wrap items-center gap-4 text-sm text-gray-300 font-light mb-4">
-                                <span className="inline-flex items-center text-primary gap-2 font-medium">
-                                    <StarIcon
-                                        size={20}
-                                        className="inline-block text-primary"
-                                        fill="currentColor"
+                            </HeroBlock>
+                            <HeroBlock index={heroIndex++}>
+                                <div className="mb-4">
+                                    <RatingWidget
+                                        mediaType={mediaType}
+                                        mediaId={mediaData.id}
+                                        initialRating={accountStates?.rating}
                                     />
-                                    {mediaData.vote_average.toFixed(2)}
-                                </span>
-                                <span>{getReleaseYear(mediaData)}</span>
-                                {isMovie(mediaData) && mediaData.runtime && (
-                                    <span>{mediaData.runtime} min</span>
-                                )}
-                                {tvShow && (
-                                    <>
-                                        <span>
-                                            {tvShow.number_of_seasons} seasons ·{" "}
-                                            {tvShow.number_of_episodes} episodes
-                                        </span>
-                                        {tvShow.created_by && tvShow.created_by.length > 0 && (
-                                            <span>
-                                                Created by{" "}
-                                                {tvShow.created_by
-                                                    .map((c) => c.name)
-                                                    .join(", ")}
-                                            </span>
-                                        )}
-                                    </>
-                                )}
-                            </p>
-                            <div className="mb-4">
-                                <GenreList
-                                    genreIds={mediaData.genres?.map((genre) => genre.id)}
-                                    mediaType={mediaType}
-                                />
-                            </div>
-                            <p className="max-w-xl line-clamp-6 text-sm mb-6">
-                                {mediaData.overview}
-                            </p>
-
-                            <div className="mb-4">
-                                <RatingWidget
+                                </div>
+                            </HeroBlock>
+                            <HeroBlock index={heroIndex++}>
+                                <MediaActionButtons
                                     mediaType={mediaType}
                                     mediaId={mediaData.id}
-                                    initialRating={accountStates?.rating}
+                                    onViewTrailers={() => setTrailerOpen(true)}
                                 />
-                            </div>
-
-                            <MediaActionButtons
-                                mediaType={mediaType}
-                                mediaId={mediaData.id}
-                                onViewTrailers={() => setTrailerOpen(true)}
-                            />
+                            </HeroBlock>
                         </div>
                     </div>
                 </VideoBackground>
@@ -203,7 +242,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
 
             {tvShow?.seasons && <SeasonScroll seasons={tvShow.seasons} />}
 
-            <section className="my-12">
+            <AnimatedSection className="my-12" delay={0}>
                 <div className="max-w-[85%] mx-auto py-6">
                     <h4 className="text-2xl font-bold mb-8 max-w-2xl flex items-center gap-2 text-white">
                         <span className="inline-block w-1 h-10 bg-primary" />
@@ -213,17 +252,17 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                         <p className="text-gray-400 text-sm">No cast information available.</p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {mediaData.credits.map((cast) => (
-                                <CastCard key={cast.id} cast={cast} />
+                            {mediaData.credits.map((cast, index) => (
+                                <CastCard key={cast.id} cast={cast} index={index} />
                             ))}
                         </div>
                     )}
                 </div>
-            </section>
+            </AnimatedSection>
 
             <ReviewsSection reviews={mediaData.reviews ?? []} />
 
-            <div className="max-w-[85%] mx-auto mb-16">
+            <AnimatedSection className="max-w-[85%] mx-auto mb-16" delay={0.15}>
                 {(mediaData.recommendations?.length ?? 0) > 0 ? (
                     <MediaCarousel
                         mediaData={mediaData.recommendations ?? []}
@@ -238,7 +277,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                         No recommendations available.
                     </p>
                 )}
-            </div>
+            </AnimatedSection>
 
             <TrailerModal
                 open={trailerOpen}

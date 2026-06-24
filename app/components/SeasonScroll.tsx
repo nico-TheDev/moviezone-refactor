@@ -1,4 +1,5 @@
 import { API } from "@/constants/api";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import type { TvShow } from "@/types/tmdb";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -11,7 +12,7 @@ export function SeasonScroll({ seasons }: { seasons: Season[] }) {
     if (filtered.length === 0) return null;
 
     return (
-        <section className="my-12">
+        <AnimatedSection className="my-12" delay={0.05}>
             <div className="max-w-[85%] mx-auto py-6">
                 <h4 className="text-2xl font-bold mb-8 flex items-center gap-2 text-white">
                     <span className="inline-block w-1 h-10 bg-primary" />
@@ -48,6 +49,6 @@ export function SeasonScroll({ seasons }: { seasons: Season[] }) {
                     </div>
                 </div>
             </div>
-        </section>
+        </AnimatedSection>
     );
 }
