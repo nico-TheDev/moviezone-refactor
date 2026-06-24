@@ -8,6 +8,7 @@ import {
     getVideos,
 } from "@/api/media.api";
 import type { DetailsWithAppendByType, MediaType, MovieVideo } from "@/types/tmdb";
+import { pickBackgroundVideo } from "@/utils/video-helpers";
 import { queryOptions } from "@tanstack/react-query";
 
 export const mediaKeys = {
@@ -24,19 +25,6 @@ export const mediaKeys = {
     topRated: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "topRated"] as const,
     popular: (mediaType: MediaType) => [...mediaKeys.byType(mediaType), "popular"] as const,
 };
-
-function pickBackgroundVideo(videos: MovieVideo[]): MovieVideo | undefined {
-    return videos
-        .filter((v) => v.site === "YouTube")
-        .sort((a, b) => {
-            const score = (v: MovieVideo) =>
-                (v.official ? 100 : 0) +
-                (v.type === "Trailer" ? 10 : v.type === "Teaser" ? 5 : 0) +
-                (v.iso_639_1 === "en" ? 3 : 0) +
-                (v.size ?? 0) / 1000;
-            return score(b) - score(a);
-        })[0];
-}
 
 export const mediaQueries = {
     top10Trending: <T extends MediaType>(mediaType: T) =>

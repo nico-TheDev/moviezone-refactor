@@ -14,11 +14,11 @@ import { Link, Navigate, redirect } from "react-router";
 function EpisodeRow({ episode, index }: { episode: SeasonEpisode; index: number }) {
     const reduce = useReducedMotion();
     const row = (
-        <article className="flex gap-4 bg-gray-900/80 p-4 rounded-lg border border-white/5">
-            <div className="w-36 shrink-0 aspect-video rounded-md overflow-hidden bg-gray-800">
+        <article className="flex flex-col sm:flex-row gap-4 bg-gray-900/80 p-4 rounded-lg border border-white/5">
+            <div className="w-full sm:w-36 shrink-0 aspect-video rounded-md overflow-hidden bg-gray-800">
                 {episode.still_path ? (
                     <img
-                        src={`${API.IMAGE_POSTER_URL}${episode.still_path}`}
+                        src={`${API.IMAGE_STILL_URL}${episode.still_path}`}
                         alt={episode.name ?? `Episode ${episode.episode_number}`}
                         className="w-full h-full object-cover"
                         loading="lazy"

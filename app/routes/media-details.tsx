@@ -47,10 +47,7 @@ export function meta({ params }: Route.MetaArgs) {
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const mediaType = assertMediaType(params.type);
     try {
-        await Promise.all([
-            queryClient.ensureQueryData(mediaQueries.details(mediaType, params.movieId)),
-            queryClient.ensureQueryData(mediaQueries.videos(mediaType, params.movieId)),
-        ]);
+        await queryClient.ensureQueryData(mediaQueries.details(mediaType, params.movieId));
     } catch {
         throw redirect("/error/failed-to-load-media");
     }
@@ -105,7 +102,6 @@ function CastCard({ cast, index }: { cast: CastMember; index: number }) {
 
 export default function MediaDetails({ params }: Route.ComponentProps) {
     const mediaType = assertMediaType(params.type);
-    const sessionId = useAuthStore((s) => s.getSessionId());
     const hasSession = useAuthStore((s) => s.hasSession());
     const [trailerOpen, setTrailerOpen] = useState(false);
 
@@ -119,12 +115,13 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
         queryKey: ["allVideos", mediaType, params.movieId],
         queryFn: ({ signal }) => getAllVideos(mediaType, params.movieId, signal),
         select: (data) => data.results ?? [],
+        enabled: trailerOpen,
     });
 
     const { data: accountStates } = useQuery({
-        queryKey: ["accountStates", mediaType, params.movieId, sessionId],
-        queryFn: () => getAccountStates(mediaType, params.movieId, sessionId!),
-        enabled: hasSession && !!sessionId,
+        queryKey: ["accountStates", mediaType, params.movieId],
+        queryFn: () => getAccountStates(mediaType, params.movieId),
+        enabled: hasSession,
     });
 
     if (isPending) {
@@ -145,13 +142,13 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                 <VideoBackground
                     backdropPath={mediaData.backdrop_path}
                     youtubeId={mediaData.videos?.key}>
-                    <div className="relative z-10 max-w-[90%] mx-auto p-6 mt-[20rem]">
+                    <div className="relative z-10 max-w-[90%] mx-auto p-6 mt-32 sm:mt-48 md:mt-64 lg:mt-80">
                         <div className="p-4">
                             <HeroBlock index={heroIndex++}>
                                 {logoImage ? (
                                     <div className="mb-4 w-50">
                                         <img
-                                            src={API.IMAGE_BACKDROP_URL + logoImage.file_path}
+                                            src={API.IMAGE_LOGO_URL + logoImage.file_path}
                                             alt=""
                                             className={cn(
                                                 "w-full h-full object-cover max-h-24",

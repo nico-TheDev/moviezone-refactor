@@ -103,7 +103,7 @@ function MediaCard({
         <div
             className={cn(
                 "min-w-0 group/card-img cursor-pointer pr-4",
-                orientation === "landscape" ? "flex-[0_0_300px]" : "flex-[0_0_250px]",
+                orientation === "landscape" ? "flex-[0_0_200px] md:flex-[0_0_300px]" : "flex-[0_0_160px] md:flex-[0_0_250px]",
             )}
             key={media.id}
             onClick={() => navigate(`/media/${mediaType}/${media.id}`)}>
@@ -119,6 +119,7 @@ function MediaCard({
                             : `${API.IMAGE_POSTER_URL}${media.poster_path}`
                     }
                     alt={getTitle(media) ?? ""}
+                    loading="lazy"
                     className="block w-full h-full object-cover group-hover/card-img:scale-110 transition-transform duration-300"
                 />
                 {topLabelEnabled && (
@@ -236,7 +237,7 @@ export function MediaCarousel({
                     onClick={onPrevButtonClick}
                     disabled={prevBtnDisabled}
                     className={cn(
-                        "opacity-0 absolute top-0 left-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer  w-10 group-hover/carousel:opacity-100 transition-opacity duration-300",
+                        "opacity-100 md:opacity-0 absolute top-0 left-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer w-10 md:group-hover/carousel:opacity-100 transition-opacity duration-300",
                         orientation === "landscape" ? "h-40" : "h-100",
                     )}
                 />
@@ -244,7 +245,7 @@ export function MediaCarousel({
                     onClick={onNextButtonClick}
                     disabled={nextBtnDisabled}
                     className={cn(
-                        "opacity-0 absolute top-0 right-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer w-10 group-hover/carousel:opacity-100 transition-opacity duration-300",
+                        "opacity-100 md:opacity-0 absolute top-0 right-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer w-10 md:group-hover/carousel:opacity-100 transition-opacity duration-300",
                         orientation === "landscape" ? "h-40" : "h-100",
                     )}
                 />
