@@ -13,6 +13,7 @@ import {
 import { deleteSession } from "@/api/auth.api";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useAuthStore } from "@/stores/auth";
+import { cn } from "@/utils/css-helpers";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
@@ -115,7 +116,10 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col sm:flex-row items-center gap-6 mb-10">
-                <UserAvatar size={120} className="size-24 border-2 border-primary" />
+                <UserAvatar
+                    size={120}
+                    className={cn("size-24", !isGuest && "border-2 border-primary rounded-full")}
+                />
                 <div className="text-center sm:text-left">
                     <h1 className="text-2xl font-bold">
                         {isGuest ? "Guest User" : account?.name || account?.username}
