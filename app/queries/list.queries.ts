@@ -8,8 +8,8 @@ export const listKeys = {
     all: ["lists"] as const,
     byCategory: (mediaType: MediaType, category: ListCategory) =>
         [...listKeys.all, mediaType, category] as const,
-    genre: (mediaType: MediaType, genreId: string) =>
-        [...listKeys.all, "genre", mediaType, genreId] as const,
+    genre: (mediaType: MediaType, genreKey: string) =>
+        [...listKeys.all, "genre", mediaType, genreKey] as const,
 };
 
 export const listQueries = {
@@ -24,13 +24,15 @@ export const listQueries = {
                 lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
         });
     },
-    genreInfinite: (mediaType: MediaType, genreId: string) =>
-        infiniteQueryOptions({
-            queryKey: listKeys.genre(mediaType, genreId),
+    genreInfinite: (mediaType: MediaType, genreIds: number[]) => {
+        const genreKey = [...genreIds].sort((a, b) => a - b).join(",");
+        return infiniteQueryOptions({
+            queryKey: listKeys.genre(mediaType, genreKey),
             queryFn: ({ pageParam, signal }) =>
-                getDiscoverByGenre(mediaType, genreId, pageParam, signal),
+                getDiscoverByGenre(mediaType, genreIds, pageParam, signal),
             initialPageParam: 1,
             getNextPageParam: (lastPage) =>
                 lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
-        }),
+        });
+    },
 };

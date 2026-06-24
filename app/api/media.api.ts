@@ -51,12 +51,12 @@ export const getListPage = (path: string, signal?: AbortSignal) =>
 
 export const getDiscoverByGenre = (
     mediaType: MediaType,
-    genreId: string,
+    genreIds: number[],
     page: number,
     signal?: AbortSignal,
 ) =>
     tmdbFetch<PaginatedResponse<MovieResult | TvResult>>(
-        `/discover/${mediaType}?with_genres=${genreId}&page=${page}&language=en-US&sort_by=popularity.desc`,
+        `/discover/${mediaType}?with_genres=${genreIds.join(",")}&page=${page}&language=en-US&sort_by=popularity.desc`,
         { signal },
     );
 
