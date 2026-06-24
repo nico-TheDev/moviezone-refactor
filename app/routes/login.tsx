@@ -2,7 +2,7 @@ import type { Route } from "./+types/login";
 import { createGuestSession, createRequestToken, getTmdbAuthRedirectUrl } from "@/api/auth.api";
 import { useAuthStore } from "@/stores/auth";
 import { useToast } from "@/components/ui/Toast";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
 
@@ -11,15 +11,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function LoginPage() {
-    const navigate = useNavigate();
     const { showToast } = useToast();
     const setGuestSession = useAuthStore((s) => s.setGuestSession);
-    const hasSession = useAuthStore((s) => s.hasSession());
+    const mode = useAuthStore((s) => s.mode);
     const [loading, setLoading] = useState<"oauth" | "guest" | null>(null);
 
-    if (hasSession) {
-        navigate("/profile", { replace: true });
-        return null;
+    if (mode !== "none") {
+        return <Navigate to={mode === "guest" ? "/" : "/profile"} replace />;
     }
 
     const handleOAuth = async () => {
@@ -39,7 +37,6 @@ export default function LoginPage() {
             const { guest_session_id } = await createGuestSession();
             setGuestSession(guest_session_id);
             showToast("Browsing as guest. You can rate movies and TV shows.");
-            navigate("/");
         } catch {
             showToast("Failed to create guest session.");
         } finally {

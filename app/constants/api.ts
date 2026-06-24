@@ -7,3 +7,13 @@ export enum API {
     API_KEY = import.meta.env.VITE_TMDB_API_KEY,
     TMDB_AUTH_URL = "https://www.themoviedb.org/authenticate",
 }
+
+export function getAppUrl(): string {
+    const configured =
+        typeof import.meta.env.VITE_APP_URL === "string"
+            ? import.meta.env.VITE_APP_URL.trim()
+            : "";
+    const origin =
+        typeof window !== "undefined" ? window.location.origin : configured;
+    return (configured || origin).replace(/\/$/, "");
+}

@@ -1,4 +1,4 @@
-import { API } from "@/constants/api";
+import { API, getAppUrl } from "@/constants/api";
 
 type RequestTokenResponse = { success: boolean; request_token: string };
 type SessionResponse = { success: boolean; session_id: string };
@@ -31,6 +31,8 @@ export const createGuestSession = () =>
     authFetch<GuestSessionResponse>("/authentication/guest_session/new");
 
 export function getTmdbAuthRedirectUrl(requestToken: string): string {
-    const redirectUrl = `${window.location.origin}/login/callback`;
+    // Use the app root so static hosts (S3/CloudFront) serve index.html.
+    // Deep paths like /login/callback return 403 when no SPA fallback is configured.
+    const redirectUrl = `${getAppUrl()}/`;
     return `${API.TMDB_AUTH_URL}/${requestToken}?redirect_to=${encodeURIComponent(redirectUrl)}`;
 }
