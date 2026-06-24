@@ -1,3 +1,4 @@
+import { API } from "@/constants/api";
 import { searchQueries } from "@/queries/search.queries";
 import { getTitle } from "@/utils/media-string-helpers";
 import { useQuery } from "@tanstack/react-query";
@@ -72,16 +73,31 @@ export function SearchBar() {
                 </div>
             </form>
             {open && debouncedQuery.length >= 2 && results && results.length > 0 && (
-                <ul className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/10 rounded-md shadow-lg z-[1000] overflow-hidden">
+                <ul className="absolute top-full left-0 right-0 min-w-[280px] mt-1 bg-gray-900 border border-white/10 rounded-md shadow-lg z-[1000] overflow-hidden">
                     {results.map((item) => (
                         <li key={`${item.media_type}-${item.id}`}>
                             <button
                                 type="button"
-                                className="w-full text-left px-3 py-2 text-sm text-white hover:bg-primary/20 truncate"
+                                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white hover:bg-primary/20 cursor-pointer"
                                 onClick={() => handleSelect(item.media_type, item.id)}>
-                                {getTitle(item)}{" "}
-                                <span className="text-gray-400 text-xs">
-                                    ({item.media_type})
+                                <div className="size-10 shrink-0 rounded overflow-hidden bg-gray-800">
+                                    {item.poster_path ? (
+                                        <img
+                                            src={`${API.IMAGE_POSTER_URL}${item.poster_path}`}
+                                            alt=""
+                                            className="size-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="size-full flex items-center justify-center text-gray-500 text-[10px]">
+                                            —
+                                        </div>
+                                    )}
+                                </div>
+                                <span className="min-w-0 flex-1 truncate">
+                                    {getTitle(item)}{" "}
+                                    <span className="text-gray-400 text-xs">
+                                        ({item.media_type})
+                                    </span>
                                 </span>
                             </button>
                         </li>
