@@ -1,0 +1,15 @@
+import "@testing-library/jest-dom/vitest";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { server } from "./mocks/server";
+
+class MockIntersectionObserver {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+}
+
+vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
