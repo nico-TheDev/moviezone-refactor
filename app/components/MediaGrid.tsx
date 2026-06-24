@@ -1,8 +1,31 @@
 import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { MOTION_DURATION, MOTION_EASE_OUT, STAGGER_CAP, STAGGER_DELAY } from "@/lib/motion";
+import { motion, useReducedMotion } from "motion/react";
+import type { ReactNode } from "react";
 import { MediaGridCard } from "./MediaGridCard";
 import { Skeleton } from "./ui/Skeleton";
 import { ErrorState } from "./ui/ErrorState";
+
+function AnimatedGridCard({ children, index }: { children: ReactNode; index: number }) {
+    const reduce = useReducedMotion();
+
+    if (reduce) return children;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{
+                duration: MOTION_DURATION,
+                ease: MOTION_EASE_OUT,
+                delay: Math.min(index, STAGGER_CAP) * STAGGER_DELAY,
+            }}>
+            {children}
+        </motion.div>
+    );
+}
 
 type Props = {
     items: Array<{ media: MovieResult | TvResult; mediaType: MediaType }>;
@@ -62,8 +85,10 @@ export function MediaGrid({
     return (
         <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {items.map(({ media, mediaType }) => (
-                    <MediaGridCard key={`${mediaType}-${media.id}`} media={media} mediaType={mediaType} />
+                {items.map(({ media, mediaType }, index) => (
+                    <AnimatedGridCard key={`${mediaType}-${media.id}`} index={index}>
+                        <MediaGridCard media={media} mediaType={mediaType} />
+                    </AnimatedGridCard>
                 ))}
             </div>
             {hasNextPage && <div ref={sentinelRef} className="h-10 mt-4" />}
