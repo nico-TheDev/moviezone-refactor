@@ -1,15 +1,24 @@
-import { WifiOff } from "lucide-react";
+import { WifiOff, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+
+const DISMISS_KEY = "moviezone-offline-banner-dismissed";
 
 export function OfflineFallback() {
     const [offline, setOffline] = useState(
         typeof navigator !== "undefined" ? !navigator.onLine : false,
     );
+    const [dismissed, setDismissed] = useState(() => {
+        if (typeof sessionStorage === "undefined") return false;
+        return sessionStorage.getItem(DISMISS_KEY) === "1";
+    });
 
     useEffect(() => {
         const onOffline = () => setOffline(true);
-        const onOnline = () => setOffline(false);
+        const onOnline = () => {
+            setOffline(false);
+            setDismissed(false);
+            sessionStorage.removeItem(DISMISS_KEY);
+        };
         window.addEventListener("offline", onOffline);
         window.addEventListener("online", onOnline);
         return () => {
@@ -18,25 +27,28 @@ export function OfflineFallback() {
         };
     }, []);
 
-    if (!offline) return null;
+    const dismiss = () => {
+        setDismissed(true);
+        sessionStorage.setItem(DISMISS_KEY, "1");
+    };
+
+    if (!offline || dismissed) return null;
 
     return (
         <div
-            role="alert"
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-950/95 p-6 text-white">
-            <div className="max-w-md text-center">
-                <WifiOff className="mx-auto mb-4 text-primary" size={48} />
-                <h2 className="text-2xl font-semibold mb-2">You&apos;re offline</h2>
-                <p className="text-gray-300 mb-6">
-                    Pages you&apos;ve visited recently may still be available from cache.
-                    New pages need an internet connection.
-                </p>
-                <Link
-                    to="/"
-                    className="inline-block px-6 py-3 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors">
-                    Go to Home
-                </Link>
-            </div>
+            role="status"
+            className="fixed bottom-0 inset-x-0 z-[9999] flex items-center gap-3 bg-gray-900/95 border-t border-gray-700 text-white px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg">
+            <WifiOff className="shrink-0 text-primary" size={20} aria-hidden />
+            <p className="flex-1 text-sm text-gray-200">
+                You&apos;re offline — cached pages may still work.
+            </p>
+            <button
+                type="button"
+                onClick={dismiss}
+                className="shrink-0 p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                aria-label="Dismiss offline notice">
+                <X size={18} />
+            </button>
         </div>
     );
 }

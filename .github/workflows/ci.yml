@@ -18,6 +18,26 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
+      - name: Verify PWA build artifacts
+        run: |
+          test -f build/client/sw.js
+          test -f build/client/manifest.webmanifest
+          test -n "$(find build/client/assets -name 'virtual_pwa-register*.js' | head -1)"
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            import sharp from 'sharp';
+            const manifest = JSON.parse(readFileSync('build/client/manifest.webmanifest', 'utf8'));
+            if (!manifest.icons?.length) throw new Error('manifest missing icons');
+            for (const icon of manifest.icons) {
+              const path = 'build/client' + icon.src;
+              const meta = await sharp(path).metadata();
+              const size = parseInt(icon.sizes.split('x')[0], 10);
+              if ((meta.width ?? 0) < size || (meta.height ?? 0) < size) {
+                throw new Error(\`icon \${icon.src} is smaller than \${icon.sizes}\`);
+              }
+            }
+            console.log('PWA artifacts OK');
+          "
       - name: Verify no TMDB token in client bundle
         run: |
           ! grep -r "TMDB_BEARER_TOKEN" build/client/assets/*.js 2>/dev/null || \

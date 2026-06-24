@@ -42,9 +42,21 @@ const staticRoot = join(process.cwd(), clientDir);
 app.use("/assets/*", serveStatic({ root: staticRoot }));
 app.use("/icons/*", serveStatic({ root: staticRoot }));
 app.use("/img/*", serveStatic({ root: staticRoot }));
+app.use("/registerSW.js", serveStatic({ root: staticRoot }));
 app.use("/manifest.webmanifest", serveStatic({ root: staticRoot }));
 app.use("/sw.js", serveStatic({ root: staticRoot }));
 app.use("/workbox-*.js", serveStatic({ root: staticRoot }));
+
+function contentTypeForPath(path: string): string {
+    if (path.endsWith(".js")) return "application/javascript";
+    if (path.endsWith(".css")) return "text/css";
+    if (path.endsWith(".webmanifest")) return "application/manifest+json";
+    if (path.endsWith(".json")) return "application/json";
+    if (path.endsWith(".png")) return "image/png";
+    if (path.endsWith(".ico")) return "image/x-icon";
+    if (path.endsWith(".svg")) return "image/svg+xml";
+    return "text/html";
+}
 
 app.get("*", (c) => {
     const path = c.req.path;
@@ -54,12 +66,7 @@ app.get("*", (c) => {
     try {
         const filePath = join(staticRoot, path === "/" ? "index.html" : path);
         const content = readFileSync(filePath);
-        const type = path.endsWith(".js")
-            ? "application/javascript"
-            : path.endsWith(".css")
-              ? "text/css"
-              : "text/html";
-        return c.body(content, 200, { "content-type": type });
+        return c.body(content, 200, { "content-type": contentTypeForPath(path) });
     } catch {
         const html = readFileSync(join(staticRoot, "index.html"), "utf-8");
         return c.html(html);

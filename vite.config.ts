@@ -17,9 +17,12 @@ export default defineConfig(({ mode }) => {
         !isTest && reactRouter(),
         !isTest &&
             VitePWA({
+            injectRegister: null,
             registerType: "autoUpdate",
             includeAssets: ["icons/favicon.ico"],
             manifest: {
+                id: "/",
+                scope: "/",
                 name: "MovieZone",
                 short_name: "MovieZone",
                 description: "Browse movies and TV shows",
@@ -39,7 +42,7 @@ export default defineConfig(({ mode }) => {
                         type: "image/png",
                     },
                     {
-                        src: "/icons/icon-512.png",
+                        src: "/icons/icon-maskable-512.png",
                         sizes: "512x512",
                         type: "image/png",
                         purpose: "maskable",
