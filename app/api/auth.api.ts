@@ -1,9 +1,10 @@
 import { API, getAppUrl } from "@/constants/api";
 import { authBffFetch } from "@/api/client";
+import type { AccountInfo } from "@/stores/auth";
 
 type RequestTokenResponse = { request_token: string };
 type SessionResponse = {
-    account: { id: number; username: string; name: string };
+    account: AccountInfo;
 };
 
 export const createRequestToken = () =>

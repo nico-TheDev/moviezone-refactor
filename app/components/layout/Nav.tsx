@@ -1,6 +1,7 @@
 import { NAV_MOVIE_LINKS, NAV_TV_LINKS } from "@/constants/lists";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useAuthStore } from "@/stores/auth";
-import { Menu, UserCircle as UserIcon, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { SearchBar } from "../SearchBar";
@@ -86,7 +87,7 @@ export function Nav() {
                     </ul>
 
                     <NavLink to={hasSession ? "/profile" : "/login"}>
-                        <UserIcon size={36} />
+                        <UserAvatar size={36} />
                     </NavLink>
                 </div>
 
@@ -165,7 +166,8 @@ export function Nav() {
                                         <NavLink
                                             to="/profile"
                                             onClick={() => setMobileOpen(false)}
-                                            className="block py-2 hover:text-primary">
+                                            className="flex items-center gap-3 py-2 hover:text-primary">
+                                            <UserAvatar size={28} />
                                             Profile
                                         </NavLink>
                                     ) : (

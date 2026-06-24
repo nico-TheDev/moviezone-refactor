@@ -13,7 +13,7 @@ export const securityHeaders: MiddlewareHandler = async (c, next) => {
             "script-src 'self' 'unsafe-inline'",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' https://image.tmdb.org data:",
+            "img-src 'self' https://image.tmdb.org https://www.gravatar.com https://secure.gravatar.com data:",
             "connect-src 'self'",
             "worker-src 'self'",
             "frame-src https://www.youtube-nocookie.com",

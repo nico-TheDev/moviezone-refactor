@@ -111,6 +111,24 @@ async function fetchAccount(sessionId: string) {
         id: number;
         username: string;
         name: string;
+        avatar?: {
+            gravatar?: { hash?: string };
+            tmdb?: { avatar_path?: string };
+        };
     };
-    return { id: account.id, username: account.username, name: account.name };
+
+    const avatar =
+        account.avatar?.gravatar?.hash || account.avatar?.tmdb?.avatar_path
+            ? {
+                  gravatarHash: account.avatar?.gravatar?.hash,
+                  tmdbPath: account.avatar?.tmdb?.avatar_path,
+              }
+            : undefined;
+
+    return {
+        id: account.id,
+        username: account.username,
+        name: account.name,
+        avatar,
+    };
 }

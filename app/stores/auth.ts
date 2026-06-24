@@ -3,10 +3,16 @@ import { persist } from "zustand/middleware";
 
 export type AuthMode = "none" | "guest" | "user";
 
-interface AccountInfo {
+export interface AccountAvatar {
+    gravatarHash?: string;
+    tmdbPath?: string;
+}
+
+export interface AccountInfo {
     id: number;
     username: string;
     name: string;
+    avatar?: AccountAvatar;
 }
 
 interface AuthState {
