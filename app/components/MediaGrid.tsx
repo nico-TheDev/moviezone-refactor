@@ -2,10 +2,14 @@ import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { MediaGridCard } from "./MediaGridCard";
 import { Skeleton } from "./ui/Skeleton";
+import { ErrorState } from "./ui/ErrorState";
 
 type Props = {
     items: Array<{ media: MovieResult | TvResult; mediaType: MediaType }>;
     isLoading?: boolean;
+    isError?: boolean;
+    error?: unknown;
+    onRetry?: () => void;
     isFetchingNextPage?: boolean;
     hasNextPage?: boolean;
     fetchNextPage?: () => void;
@@ -15,6 +19,9 @@ type Props = {
 export function MediaGrid({
     items,
     isLoading,
+    isError,
+    error,
+    onRetry,
     isFetchingNextPage,
     hasNextPage = false,
     fetchNextPage,
@@ -38,6 +45,10 @@ export function MediaGrid({
                 ))}
             </div>
         );
+    }
+
+    if (isError) {
+        return <ErrorState layout="section" error={error} onRetry={onRetry} />;
     }
 
     if (items.length === 0) {

@@ -7,16 +7,13 @@ import type { MediaType } from "@/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion } from "motion/react";
+import { SectionError } from "@/components/ui/SectionError";
 
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "MovieZone" },
         { name: "description", content: "Search for movies, TV shows, people..." },
     ];
-}
-
-function SectionError({ message }: { message: string }) {
-    return <p className="max-w-[90%] mx-auto text-sm text-gray-400">{message}</p>;
 }
 
 function FeatureMedia() {
@@ -30,17 +27,20 @@ function FeatureMedia() {
         enabled: mediaType === "tv",
     });
 
+    const activeQuery = mediaType === "movie" ? featuredMovies : featuredTvShows;
+
     return (
         <MediaCarousel
-            mediaData={
-                mediaType === "movie" ? (featuredMovies.data ?? []) : (featuredTvShows.data ?? [])
-            }
+            mediaData={activeQuery.data ?? []}
             options={{ loop: true, dragFree: true }}
             title="Featured Today"
             orientation="landscape"
             mediaType={mediaType}
             setMediaType={setMediaType}
-            isLoading={mediaType === "movie" ? featuredMovies.isPending : featuredTvShows.isPending}
+            isLoading={activeQuery.isPending}
+            isError={activeQuery.isError}
+            error={activeQuery.error}
+            onRetry={() => activeQuery.refetch()}
         />
     );
 }
@@ -56,18 +56,21 @@ function TrendingMedia() {
         enabled: mediaType === "tv",
     });
 
+    const activeQuery = mediaType === "movie" ? trendingMovies : trendingTvShows;
+
     return (
         <MediaCarousel
-            mediaData={
-                mediaType === "movie" ? (trendingMovies.data ?? []) : (trendingTvShows.data ?? [])
-            }
+            mediaData={activeQuery.data ?? []}
             options={{ loop: true, dragFree: true }}
             title="Top 10"
             orientation="portrait"
             topLabelEnabled
             mediaType={mediaType}
             setMediaType={setMediaType}
-            isLoading={mediaType === "movie" ? trendingMovies.isPending : trendingTvShows.isPending}
+            isLoading={activeQuery.isPending}
+            isError={activeQuery.isError}
+            error={activeQuery.error}
+            onRetry={() => activeQuery.refetch()}
         />
     );
 }
@@ -83,17 +86,20 @@ function TopRatedMedia() {
         enabled: mediaType === "tv",
     });
 
+    const activeQuery = mediaType === "movie" ? topRatedMovies : topRatedTvShows;
+
     return (
         <MediaCarousel
-            mediaData={
-                mediaType === "movie" ? (topRatedMovies.data ?? []) : (topRatedTvShows.data ?? [])
-            }
+            mediaData={activeQuery.data ?? []}
             options={{ loop: true, dragFree: true }}
             title="Top Rated"
             orientation="landscape"
             mediaType={mediaType}
             setMediaType={setMediaType}
-            isLoading={mediaType === "movie" ? topRatedMovies.isPending : topRatedTvShows.isPending}
+            isLoading={activeQuery.isPending}
+            isError={activeQuery.isError}
+            error={activeQuery.error}
+            onRetry={() => activeQuery.refetch()}
         />
     );
 }
@@ -109,17 +115,20 @@ function PopularMedia() {
         enabled: mediaType === "tv",
     });
 
+    const activeQuery = mediaType === "movie" ? popularMovies : popularTvShows;
+
     return (
         <MediaCarousel
-            mediaData={
-                mediaType === "movie" ? (popularMovies.data ?? []) : (popularTvShows.data ?? [])
-            }
+            mediaData={activeQuery.data ?? []}
             options={{ loop: true, dragFree: true }}
             title="Popular"
             orientation="landscape"
             mediaType={mediaType}
             setMediaType={setMediaType}
-            isLoading={mediaType === "movie" ? popularMovies.isPending : popularTvShows.isPending}
+            isLoading={activeQuery.isPending}
+            isError={activeQuery.isError}
+            error={activeQuery.error}
+            onRetry={() => activeQuery.refetch()}
         />
     );
 }
@@ -132,7 +141,13 @@ export default function Home() {
                 {trendingMovies.isPending ? (
                     <HeroFeaturedSkeleton />
                 ) : trendingMovies.isError ? (
-                    <SectionError message="Failed to load featured shows." />
+                    <div className="max-w-[90%] mx-auto h-full flex items-center justify-center">
+                        <SectionError
+                            message="Failed to load featured shows."
+                            error={trendingMovies.error}
+                            onRetry={() => trendingMovies.refetch()}
+                        />
+                    </div>
                 ) : (
                     <HeroFeaturedCarousel items={trendingMovies.data ?? []} mediaType="movie" />
                 )}

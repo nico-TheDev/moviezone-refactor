@@ -17,9 +17,8 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
     const { data: genres } = useQuery(mediaQueries.genres(mediaType));
     const genreName = genres?.get(Number(genreId)) ?? params.slug;
 
-    const { data, isPending, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery(
-        listQueries.genreInfinite(mediaType, genreId),
-    );
+    const { data, isPending, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        useInfiniteQuery(listQueries.genreInfinite(mediaType, genreId));
 
     const items = useMemo(
         () =>
@@ -38,6 +37,9 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
             <MediaGrid
                 items={items}
                 isLoading={isPending}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
                 isFetchingNextPage={isFetchingNextPage}
                 hasNextPage={hasNextPage}
                 fetchNextPage={fetchNextPage}

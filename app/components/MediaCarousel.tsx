@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, StarIcon } from "lucide-react";
 import { cn } from "@/utils/css-helpers";
 import { MediaCarouselSkeleton } from "./MediaCarouselSkeleton";
 import { useNavigate } from "react-router";
+import { SectionError } from "./ui/SectionError";
 
 type UsePrevNextButtonsType = {
     prevBtnDisabled: boolean;
@@ -163,6 +164,9 @@ interface IProps {
     mediaType: MediaType;
     setMediaType: (mediaType: MediaType) => void;
     isLoading?: boolean;
+    isError?: boolean;
+    error?: unknown;
+    onRetry?: () => void;
     showMediaTypeSelector?: boolean;
 }
 
@@ -175,6 +179,9 @@ export function MediaCarousel({
     mediaType = "movie",
     setMediaType,
     isLoading,
+    isError,
+    error,
+    onRetry,
     showMediaTypeSelector = true,
 }: IProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
@@ -184,6 +191,18 @@ export function MediaCarousel({
 
     if (isLoading) {
         return <MediaCarouselSkeleton title={title} orientation={orientation} />;
+    }
+
+    if (isError) {
+        return (
+            <div className="w-full mx-auto">
+                <div className="flex items-center gap-2 mb-4">
+                    <span className="w-1 bg-primary block h-8" />
+                    <h2 className="text-2xl font-bold text-white">{title}</h2>
+                </div>
+                <SectionError error={error} onRetry={onRetry} />
+            </div>
+        );
     }
 
     return (

@@ -9,7 +9,8 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, StarIcon } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { Link, Navigate, redirect } from "react-router";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { Link } from "react-router";
 
 function EpisodeRow({ episode, index }: { episode: SeasonEpisode; index: number }) {
     const reduce = useReducedMotion();
@@ -83,21 +84,17 @@ export function meta({ params }: Route.MetaArgs) {
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-    try {
-        await Promise.all([
-            queryClient.ensureQueryData(
-                seasonQueries.details(params.showId, params.seasonNumber),
-            ),
-            queryClient.ensureQueryData(mediaQueries.details("tv", params.showId)),
-        ]);
-    } catch {
-        throw redirect("/error/failed-to-load-media");
-    }
+    await Promise.all([
+        queryClient.ensureQueryData(
+            seasonQueries.details(params.showId, params.seasonNumber),
+        ),
+        queryClient.ensureQueryData(mediaQueries.details("tv", params.showId)),
+    ]);
     return null;
 }
 
 export default function SeasonDetails({ params }: Route.ComponentProps) {
-    const { data: season, isPending, isError } = useQuery(
+    const { data: season, isPending, isError, error, refetch } = useQuery(
         seasonQueries.details(params.showId, params.seasonNumber),
     );
     const { data: show } = useQuery(mediaQueries.details("tv", params.showId));
@@ -125,7 +122,15 @@ export default function SeasonDetails({ params }: Route.ComponentProps) {
     }
 
     if (isError || !season) {
-        return <Navigate to="/error/failed-to-load-media" replace />;
+        return (
+            <main className="min-h-screen bg-gray-950 py-24">
+                <ErrorState
+                    title="Failed to load season"
+                    error={error}
+                    onRetry={() => refetch()}
+                />
+            </main>
+        );
     }
 
     const showName = show && "name" in show ? show.name : "Show";

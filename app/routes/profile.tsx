@@ -18,6 +18,7 @@ import { useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import type { MediaType } from "@/types/tmdb";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { motion } from "motion/react";
 
 type Tab = "favorites" | "rated" | "watchlist";
@@ -77,7 +78,8 @@ export default function ProfilePage() {
 
     const availableTabs: Tab[] = isGuest ? ["rated"] : ["favorites", "rated", "watchlist"];
 
-    const { data, isPending, isFetchingNextPage, hasNextPage, fetchNextPage } = useProfileList(
+    const { data, isPending, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        useProfileList(
         tab,
         mediaTab,
         account?.id ?? null,
@@ -170,6 +172,8 @@ export default function ProfilePage() {
                 <div className="flex justify-center py-12">
                     <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
+            ) : isError ? (
+                <ErrorState layout="section" error={error} onRetry={() => refetch()} />
             ) : items.length === 0 ? (
                 <p className="text-gray-400 text-center py-12">No items in this list yet.</p>
             ) : (

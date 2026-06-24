@@ -22,7 +22,8 @@ import { getAllVideos } from "@/api/media.api";
 import { useAuthStore } from "@/stores/auth";
 import { motion, useReducedMotion } from "motion/react";
 import { useState, type ReactNode } from "react";
-import { Link, Navigate, redirect } from "react-router";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { Link } from "react-router";
 
 function isMovie(media: Movie | TvShow): media is Movie {
     return "title" in media;
@@ -46,11 +47,7 @@ export function meta({ params }: Route.MetaArgs) {
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const mediaType = assertMediaType(params.type);
-    try {
-        await queryClient.ensureQueryData(mediaQueries.details(mediaType, params.movieId));
-    } catch {
-        throw redirect("/error/failed-to-load-media");
-    }
+    await queryClient.ensureQueryData(mediaQueries.details(mediaType, params.movieId));
     return null;
 }
 
@@ -109,6 +106,8 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
         data: mediaData,
         isPending,
         isError,
+        error,
+        refetch,
     } = useQuery(mediaQueries.details(mediaType, params.movieId));
 
     const { data: allVideos } = useQuery({
@@ -129,7 +128,15 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
     }
 
     if (isError || !mediaData) {
-        return <Navigate to="/error/failed-to-load-media" replace />;
+        return (
+            <main className="min-h-screen bg-gray-950">
+                <ErrorState
+                    title="Failed to load media"
+                    error={error}
+                    onRetry={() => refetch()}
+                />
+            </main>
+        );
     }
 
     const logoImage = mediaData.images?.find((logo) => logo.iso_639_1 === "en");

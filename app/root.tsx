@@ -1,6 +1,4 @@
 import {
-    isRouteErrorResponse,
-    Link,
     Links,
     Meta,
     Outlet,
@@ -10,9 +8,13 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, QueryErrorResetBoundary } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { OfflineFallback } from "@/components/OfflineFallback";
+import { registerPwa } from "@/lib/registerPwa";
+import { useEffect } from "react";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { getErrorMessage } from "@/utils/error-helpers";
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -31,6 +33,7 @@ export const links: Route.LinksFunction = () => [
         href: "/icons/favicon.ico",
     },
     { rel: "apple-touch-icon", href: "/icons/icon-192.png" },
+    { rel: "manifest", href: "/manifest.webmanifest" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -58,6 +61,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+    useEffect(() => {
+        registerPwa();
+    }, []);
+
     return (
         <QueryClientProvider client={queryClient}>
             <Outlet />
@@ -67,37 +74,31 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-    let message = "Oops!";
-    let details = "An unexpected error occurred.";
+    const copy = getErrorMessage(error);
     let stack: string | undefined;
 
-    if (isRouteErrorResponse(error)) {
-        message = error.status === 404 ? "404" : "Error";
-        details =
-            error.status === 404
-                ? "The requested page could not be found."
-                : error.statusText || details;
-    } else if (import.meta.env.DEV && error && error instanceof Error) {
-        details = error.message;
+    if (import.meta.env.DEV && error && error instanceof Error) {
         stack = error.stack;
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gray-950 text-white p-4">
-            <div className="text-center max-w-md">
-                <h1 className="text-4xl font-bold mb-4 text-primary">{message}</h1>
-                <p className="text-gray-300 mb-8">{details}</p>
-                <Link
-                    to="/"
-                    className="inline-block px-6 py-3 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors">
-                    Return to Home
-                </Link>
-                {stack && (
-                    <pre className="mt-8 w-full p-4 overflow-x-auto text-left text-xs text-gray-500 bg-gray-900 rounded-lg">
-                        <code>{stack}</code>
-                    </pre>
-                )}
-            </div>
-        </main>
+        <QueryErrorResetBoundary>
+            {({ reset }) => (
+                <main className="min-h-screen flex items-center justify-center bg-gray-950 text-white p-4">
+                    <div className="w-full max-w-md">
+                        <ErrorState
+                            title={copy.title}
+                            message={copy.message}
+                            onRetry={reset}
+                        />
+                        {stack && (
+                            <pre className="mt-8 w-full p-4 overflow-x-auto text-left text-xs text-gray-500 bg-gray-900 rounded-lg">
+                                <code>{stack}</code>
+                            </pre>
+                        )}
+                    </div>
+                </main>
+            )}
+        </QueryErrorResetBoundary>
     );
 }

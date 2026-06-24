@@ -18,9 +18,8 @@ export default function ListPage({ params }: Route.ComponentProps) {
     const category = assertListCategory(mediaType, params.category);
     const config = getListConfig(mediaType, category);
 
-    const { data, isPending, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery(
-        listQueries.infinite(mediaType, category),
-    );
+    const { data, isPending, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        useInfiniteQuery(listQueries.infinite(mediaType, category));
 
     const items = useMemo(
         () =>
@@ -39,6 +38,9 @@ export default function ListPage({ params }: Route.ComponentProps) {
             <MediaGrid
                 items={items}
                 isLoading={isPending}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
                 isFetchingNextPage={isFetchingNextPage}
                 hasNextPage={hasNextPage}
                 fetchNextPage={fetchNextPage}
