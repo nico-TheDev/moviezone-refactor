@@ -9,7 +9,6 @@ import { StarIcon } from "lucide-react";
 import GenreList from "@/components/GenreList";
 import { API } from "@/constants/api";
 import { MediaCarousel } from "@/components/MediaCarousel";
-import { cn } from "@/utils/css-helpers";
 import { MediaDetailsSkeleton } from "@/components/MediaDetailsSkeleton";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SeasonScroll } from "@/components/SeasonScroll";
@@ -130,11 +129,7 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
     if (isError || !mediaData) {
         return (
             <main className="min-h-screen bg-gray-950">
-                <ErrorState
-                    title="Failed to load media"
-                    error={error}
-                    onRetry={() => refetch()}
-                />
+                <ErrorState title="Failed to load media" error={error} onRetry={() => refetch()} />
             </main>
         );
     }
@@ -157,11 +152,8 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
                                         <img
                                             src={API.IMAGE_LOGO_URL + logoImage.file_path}
                                             alt=""
-                                            className={cn(
-                                                "w-full h-full object-cover max-h-24",
-                                                logoImage.aspect_ratio &&
-                                                    `aspect-[${logoImage.aspect_ratio}]`,
-                                            )}
+                                            className="max-h-40 object-cover"
+                                            style={{ aspectRatio: logoImage.aspect_ratio }}
                                             loading="lazy"
                                         />
                                     </div>
