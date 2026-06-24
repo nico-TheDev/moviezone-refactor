@@ -2,7 +2,7 @@ import { rateMovie, rateTv } from "@/api/account.api";
 import { useAuthStore } from "@/stores/auth";
 import { useToast } from "@/components/ui/Toast";
 import { StarIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { MediaType } from "@/types/tmdb";
 import { cn } from "@/utils/css-helpers";
 
@@ -18,6 +18,10 @@ export function RatingWidget({
     const [rating, setRating] = useState(initialRating ?? 0);
     const [hover, setHover] = useState(0);
     const hasSession = useAuthStore((s) => s.hasSession());
+
+    useEffect(() => {
+        if (initialRating != null) setRating(initialRating);
+    }, [initialRating]);
     const { showToast } = useToast();
 
     const handleRate = async (value: number) => {

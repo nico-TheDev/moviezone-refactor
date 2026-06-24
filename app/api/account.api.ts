@@ -73,17 +73,27 @@ export const removeFromWatchlist = (
         body: JSON.stringify({ media_type: mediaType, media_id: mediaId, watchlist: false }),
     });
 
-export const getAccountStates = (
+type AccountStatesRaw = {
+    favorite: boolean;
+    watchlist: boolean;
+    rated?: { value: number };
+};
+
+export const getAccountStates = async (
     mediaType: "movie" | "tv",
     mediaId: string,
     signal?: AbortSignal,
-) =>
-    tmdbFetch<{
-        favorite: boolean;
-        watchlist: boolean;
-        rated: boolean;
-        rating?: number;
-    }>(`/${mediaType}/${mediaId}/account_states`, { signal });
+) => {
+    const raw = await tmdbFetch<AccountStatesRaw>(`/${mediaType}/${mediaId}/account_states`, {
+        signal,
+    });
+    return {
+        favorite: raw.favorite,
+        watchlist: raw.watchlist,
+        rated: !!raw.rated,
+        rating: raw.rated?.value,
+    };
+};
 
 export const getFavoriteMovies = (accountId: number, page: number) =>
     tmdbFetch<PaginatedResponse<MovieResult>>(
