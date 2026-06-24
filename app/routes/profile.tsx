@@ -10,6 +10,7 @@ import {
     getWatchlistMovies,
     getWatchlistTv,
 } from "@/api/account.api";
+import { deleteSession } from "@/api/auth.api";
 import { useAuthStore } from "@/stores/auth";
 import { gravatarUrl } from "@/utils/gravatar";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -26,46 +27,37 @@ export function meta({}: Route.MetaArgs) {
     return [{ title: "Profile | MovieZone" }];
 }
 
-function useProfileList(
-    tab: Tab,
-    mediaTab: MediaTab,
-    accountId: number | null,
-    sessionId: string | null,
-    guestSessionId: string | null,
-    isGuest: boolean,
-) {
+function useProfileList(tab: Tab, mediaTab: MediaTab, accountId: number | null, isGuest: boolean) {
     return useInfiniteQuery({
-        queryKey: ["profile", tab, mediaTab, accountId, sessionId, guestSessionId],
+        queryKey: ["profile", tab, mediaTab, accountId, isGuest],
         queryFn: async ({ pageParam }) => {
-            if (isGuest && guestSessionId) {
+            if (isGuest) {
                 if (tab !== "rated") return { results: [], page: 1, total_pages: 1, total_results: 0 };
                 return mediaTab === "movie"
-                    ? getGuestRatedMovies(guestSessionId, pageParam)
-                    : getGuestRatedTv(guestSessionId, pageParam);
+                    ? getGuestRatedMovies(pageParam)
+                    : getGuestRatedTv(pageParam);
             }
-            if (!accountId || !sessionId) {
+            if (!accountId) {
                 return { results: [], page: 1, total_pages: 1, total_results: 0 };
             }
             if (tab === "favorites") {
                 return mediaTab === "movie"
-                    ? getFavoriteMovies(accountId, sessionId, pageParam)
-                    : getFavoriteTv(accountId, sessionId, pageParam);
+                    ? getFavoriteMovies(accountId, pageParam)
+                    : getFavoriteTv(accountId, pageParam);
             }
             if (tab === "watchlist") {
                 return mediaTab === "movie"
-                    ? getWatchlistMovies(accountId, sessionId, pageParam)
-                    : getWatchlistTv(accountId, sessionId, pageParam);
+                    ? getWatchlistMovies(accountId, pageParam)
+                    : getWatchlistTv(accountId, pageParam);
             }
-            const rated =
-                mediaTab === "movie"
-                    ? await getRatedMovies(accountId, sessionId, pageParam)
-                    : await getRatedTv(accountId, sessionId, pageParam);
-            return rated;
+            return mediaTab === "movie"
+                ? getRatedMovies(accountId, pageParam)
+                : getRatedTv(accountId, pageParam);
         },
         initialPageParam: 1,
         getNextPageParam: (last) =>
             last.page < last.total_pages ? last.page + 1 : undefined,
-        enabled: !!(sessionId || guestSessionId),
+        enabled: isGuest || !!accountId,
     });
 }
 
@@ -73,8 +65,6 @@ export default function ProfilePage() {
     const navigate = useNavigate();
     const mode = useAuthStore((s) => s.mode);
     const account = useAuthStore((s) => s.account);
-    const sessionId = useAuthStore((s) => s.sessionId);
-    const guestSessionId = useAuthStore((s) => s.guestSessionId);
     const logout = useAuthStore((s) => s.logout);
     const isGuest = mode === "guest";
 
@@ -91,8 +81,6 @@ export default function ProfilePage() {
         tab,
         mediaTab,
         account?.id ?? null,
-        sessionId,
-        guestSessionId,
         isGuest,
     );
 
@@ -117,6 +105,12 @@ export default function ProfilePage() {
         ? gravatarUrl(`${account.username}@tmdb.local`)
         : gravatarUrl("guest@moviezone.local");
 
+    const handleLogout = async () => {
+        await deleteSession().catch(() => undefined);
+        logout();
+        navigate("/");
+    };
+
     return (
         <main className="max-w-[85%] mx-auto py-24 text-white">
             <motion.div
@@ -138,10 +132,7 @@ export default function ProfilePage() {
                 </div>
                 <button
                     type="button"
-                    onClick={() => {
-                        logout();
-                        navigate("/");
-                    }}
+                    onClick={handleLogout}
                     className="sm:ml-auto px-4 py-2 border border-white/20 rounded-full text-sm hover:border-primary transition-colors">
                     Logout
                 </button>

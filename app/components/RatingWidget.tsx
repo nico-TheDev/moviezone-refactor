@@ -17,7 +17,6 @@ export function RatingWidget({
 }) {
     const [rating, setRating] = useState(initialRating ?? 0);
     const [hover, setHover] = useState(0);
-    const getSessionId = useAuthStore((s) => s.getSessionId);
     const hasSession = useAuthStore((s) => s.hasSession());
     const { showToast } = useToast();
 
@@ -26,14 +25,12 @@ export function RatingWidget({
             showToast("Sign in or browse as guest to rate.", { loginLink: true });
             return;
         }
-        const sessionId = getSessionId();
-        if (!sessionId) return;
 
         try {
             if (mediaType === "movie") {
-                await rateMovie(String(mediaId), sessionId, value);
+                await rateMovie(String(mediaId), value);
             } else {
-                await rateTv(String(mediaId), sessionId, value);
+                await rateTv(String(mediaId), value);
             }
             setRating(value);
             showToast("Rating saved!");

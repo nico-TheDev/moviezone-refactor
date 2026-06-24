@@ -1,5 +1,4 @@
 import { createSession } from "@/api/auth.api";
-import { getAccount } from "@/api/account.api";
 import { useAuthStore } from "@/stores/auth";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -25,14 +24,9 @@ export function useTmdbAuthCallback() {
 
         (async () => {
             try {
-                const { session_id } = await createSession(requestToken);
-                const account = await getAccount(session_id);
+                const { account } = await createSession(requestToken);
                 if (cancelled) return;
-                setUserSession(session_id, {
-                    id: account.id,
-                    username: account.username,
-                    name: account.name,
-                });
+                setUserSession(account);
                 navigate("/profile", { replace: true });
             } catch {
                 if (!cancelled) {

@@ -34,8 +34,8 @@ export default function LoginPage() {
     const handleGuest = async () => {
         setLoading("guest");
         try {
-            const { guest_session_id } = await createGuestSession();
-            setGuestSession(guest_session_id);
+            await createGuestSession();
+            setGuestSession();
             showToast("Browsing as guest. You can rate movies and TV shows.");
         } catch {
             showToast("Failed to create guest session.");

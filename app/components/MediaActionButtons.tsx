@@ -22,44 +22,43 @@ export function MediaActionButtons({
     onViewTrailers: () => void;
 }) {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated());
-    const sessionId = useAuthStore((s) => s.sessionId);
     const account = useAuthStore((s) => s.account);
     const { showToast } = useToast();
     const queryClient = useQueryClient();
 
     const { data: states } = useQuery({
-        queryKey: ["accountStates", mediaType, mediaId, sessionId],
-        queryFn: () => getAccountStates(mediaType, String(mediaId), sessionId!),
-        enabled: isAuthenticated && !!sessionId,
+        queryKey: ["accountStates", mediaType, mediaId],
+        queryFn: () => getAccountStates(mediaType, String(mediaId)),
+        enabled: isAuthenticated,
     });
 
     const requireAuth = (action: () => Promise<void>) => async () => {
-        if (!isAuthenticated || !sessionId || !account) {
+        if (!isAuthenticated || !account) {
             showToast("Login required for this action.", { loginLink: true });
             return;
         }
         await action();
         queryClient.invalidateQueries({
-            queryKey: ["accountStates", mediaType, mediaId, sessionId],
+            queryKey: ["accountStates", mediaType, mediaId],
         });
     };
 
     const toggleFavorite = requireAuth(async () => {
         if (states?.favorite) {
-            await removeFavorite(account!.id, sessionId!, mediaType, mediaId);
+            await removeFavorite(account!.id, mediaType, mediaId);
             showToast("Removed from favorites.");
         } else {
-            await addFavorite(account!.id, sessionId!, mediaType, mediaId);
+            await addFavorite(account!.id, mediaType, mediaId);
             showToast("Added to favorites!");
         }
     });
 
     const toggleWatchlist = requireAuth(async () => {
         if (states?.watchlist) {
-            await removeFromWatchlist(account!.id, sessionId!, mediaType, mediaId);
+            await removeFromWatchlist(account!.id, mediaType, mediaId);
             showToast("Removed from watchlist.");
         } else {
-            await addToWatchlist(account!.id, sessionId!, mediaType, mediaId);
+            await addToWatchlist(account!.id, mediaType, mediaId);
             showToast("Added to watchlist!");
         }
     });
