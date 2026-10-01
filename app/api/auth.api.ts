@@ -1,5 +1,5 @@
-import { API, getAppUrl } from "@/constants/api";
 import { authBffFetch } from "@/api/client";
+import { API, getAppUrl } from "@/constants/api";
 import type { AccountInfo } from "@/stores/auth";
 
 type RequestTokenResponse = { request_token: string };
@@ -7,8 +7,7 @@ type SessionResponse = {
     account: AccountInfo;
 };
 
-export const createRequestToken = () =>
-    authBffFetch<RequestTokenResponse>("/request-token");
+export const createRequestToken = () => authBffFetch<RequestTokenResponse>("/request-token");
 
 export const createSession = (requestToken: string) =>
     authBffFetch<SessionResponse>("/session", {

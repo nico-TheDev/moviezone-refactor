@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
-import userEvent from "@testing-library/user-event";
 import { screen } from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { renderWithProviders } from "../utils/render";
 

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { API } from "@/constants/api";
 
 const YT_ORIGIN = "https://www.youtube-nocookie.com";
@@ -76,7 +76,8 @@ export default function VideoBackground({ backdropPath, youtubeId, children }: I
                     onClick={toggleMute}
                     aria-label={muted ? "Unmute trailer" : "Mute trailer"}
                     aria-pressed={!muted}
-                    className="absolute bottom-4 right-4 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur transition-colors cursor-pointer border border-white/70">
+                    className="absolute bottom-4 right-4 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur transition-colors cursor-pointer border border-white/70"
+                >
                     {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>
             )}

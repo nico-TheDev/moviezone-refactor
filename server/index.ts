@@ -29,8 +29,7 @@ app.all("/api/tmdb/*", async (c) => {
     const { pathname, search } = new URL(c.req.url);
     const path = (pathname.replace(/^\/api\/tmdb/, "") || "/") + search;
     const method = c.req.method;
-    const body =
-        method === "POST" || method === "DELETE" ? await c.req.text() : undefined;
+    const body = method === "POST" || method === "DELETE" ? await c.req.text() : undefined;
     return proxyTmdbRequest(c, method, path, body || undefined);
 });
 

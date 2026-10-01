@@ -63,9 +63,5 @@ export const getDiscoverByGenre = (
 export const getAllVideos = (mediaType: MediaType, id: string, signal?: AbortSignal) =>
     tmdbFetch<MovieVideosResponse>(`/${mediaType}/${id}/videos`, { signal });
 
-export const getSeasonDetails = (
-    showId: string,
-    seasonNumber: string,
-    signal?: AbortSignal,
-) =>
+export const getSeasonDetails = (showId: string, seasonNumber: string, signal?: AbortSignal) =>
     tmdbFetch<SeasonDetails>(`/tv/${showId}/season/${seasonNumber}`, { signal });

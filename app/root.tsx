@@ -1,19 +1,13 @@
-import {
-    Links,
-    Meta,
-    Outlet,
-    Scripts,
-    ScrollRestoration,
-} from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { QueryClientProvider, QueryErrorResetBoundary } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
-import { OfflineFallback } from "@/components/OfflineFallback";
-import { registerPwa } from "@/lib/registerPwa";
 import { useEffect } from "react";
+import { OfflineFallback } from "@/components/OfflineFallback";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { queryClient } from "@/lib/queryClient";
+import { registerPwa } from "@/lib/registerPwa";
 import { getErrorMessage } from "@/utils/error-helpers";
 
 export const links: Route.LinksFunction = () => [
@@ -86,11 +80,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             {({ reset }) => (
                 <main className="min-h-screen flex items-center justify-center bg-gray-950 text-white p-4">
                     <div className="w-full max-w-md">
-                        <ErrorState
-                            title={copy.title}
-                            message={copy.message}
-                            onRetry={reset}
-                        />
+                        <ErrorState title={copy.title} message={copy.message} onRetry={reset} />
                         {stack && (
                             <pre className="mt-8 w-full p-4 overflow-x-auto text-left text-xs text-gray-500 bg-gray-900 rounded-lg">
                                 <code>{stack}</code>

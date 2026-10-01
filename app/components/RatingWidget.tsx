@@ -1,8 +1,8 @@
-import { rateMovie, rateTv } from "@/api/account.api";
-import { useAuthStore } from "@/stores/auth";
-import { useToast } from "@/components/ui/Toast";
 import { StarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { rateMovie, rateTv } from "@/api/account.api";
+import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/stores/auth";
 import type { MediaType } from "@/types/tmdb";
 import { cn } from "@/utils/css-helpers";
 
@@ -55,7 +55,8 @@ export function RatingWidget({
                         onMouseEnter={() => setHover(value)}
                         onMouseLeave={() => setHover(0)}
                         onClick={() => handleRate(value * 2)}
-                        className="p-0.5">
+                        className="p-0.5"
+                    >
                         <StarIcon
                             size={22}
                             className={cn(

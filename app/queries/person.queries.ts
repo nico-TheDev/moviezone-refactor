@@ -1,5 +1,5 @@
-import { getPersonCombinedCredits, getPersonDetails } from "@/api/person.api";
 import { queryOptions } from "@tanstack/react-query";
+import { getPersonCombinedCredits, getPersonDetails } from "@/api/person.api";
 
 export const personKeys = {
     all: ["person"] as const,

@@ -1,6 +1,6 @@
+import { Outlet } from "react-router";
 import { TmdbAuthCallbackHandler } from "@/components/TmdbAuthCallbackHandler";
 import { ToastProvider } from "@/components/ui/Toast";
-import { Outlet } from "react-router";
 import { Footer } from "./Footer";
 import { Nav } from "./Nav";
 

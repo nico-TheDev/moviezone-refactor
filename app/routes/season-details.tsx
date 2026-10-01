@@ -1,16 +1,16 @@
-import type { Route } from "./+types/season-details";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, StarIcon } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { Link } from "react-router";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { API } from "@/constants/api";
 import { queryClient } from "@/lib/queryClient";
 import { mediaQueries } from "@/queries/media.queries";
 import { seasonQueries } from "@/queries/season.queries";
 import type { SeasonEpisode } from "@/types/tmdb";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, StarIcon } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
-import { ErrorState } from "@/components/ui/ErrorState";
-import { Link } from "react-router";
+import type { Route } from "./+types/season-details";
 
 function EpisodeRow({ episode, index }: { episode: SeasonEpisode; index: number }) {
     const reduce = useReducedMotion();
@@ -61,7 +61,8 @@ function EpisodeRow({ episode, index }: { episode: SeasonEpisode; index: number 
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.04 }}>
+            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.04 }}
+        >
             {row}
         </motion.div>
     );
@@ -85,18 +86,20 @@ export function meta({ params }: Route.MetaArgs) {
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     await Promise.all([
-        queryClient.ensureQueryData(
-            seasonQueries.details(params.showId, params.seasonNumber),
-        ),
+        queryClient.ensureQueryData(seasonQueries.details(params.showId, params.seasonNumber)),
         queryClient.ensureQueryData(mediaQueries.details("tv", params.showId)),
     ]);
     return null;
 }
 
 export default function SeasonDetails({ params }: Route.ComponentProps) {
-    const { data: season, isPending, isError, error, refetch } = useQuery(
-        seasonQueries.details(params.showId, params.seasonNumber),
-    );
+    const {
+        data: season,
+        isPending,
+        isError,
+        error,
+        refetch,
+    } = useQuery(seasonQueries.details(params.showId, params.seasonNumber));
     const { data: show } = useQuery(mediaQueries.details("tv", params.showId));
 
     if (isPending) {
@@ -113,8 +116,8 @@ export default function SeasonDetails({ params }: Route.ComponentProps) {
                     </div>
                 </div>
                 <div className="space-y-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <Skeleton key={i} className="h-28 w-full rounded-lg" />
+                    {["episode-1", "episode-2", "episode-3", "episode-4"].map((key) => (
+                        <Skeleton key={key} className="h-28 w-full rounded-lg" />
                     ))}
                 </div>
             </main>
@@ -124,11 +127,7 @@ export default function SeasonDetails({ params }: Route.ComponentProps) {
     if (isError || !season) {
         return (
             <main className="min-h-screen bg-gray-950 py-24">
-                <ErrorState
-                    title="Failed to load season"
-                    error={error}
-                    onRetry={() => refetch()}
-                />
+                <ErrorState title="Failed to load season" error={error} onRetry={() => refetch()} />
             </main>
         );
     }
@@ -140,7 +139,8 @@ export default function SeasonDetails({ params }: Route.ComponentProps) {
         <main className="max-w-[85%] mx-auto py-24 text-white">
             <Link
                 to={`/media/tv/${params.showId}`}
-                className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-primary transition-colors mb-8">
+                className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-primary transition-colors mb-8"
+            >
                 <ArrowLeft size={16} />
                 Back to {showName}
             </Link>
@@ -167,9 +167,7 @@ export default function SeasonDetails({ params }: Route.ComponentProps) {
                         <p className="text-sm text-gray-400 mb-4">
                             {season.air_date && <span>{season.air_date}</span>}
                             {season.air_date && episodes.length > 0 && <span> · </span>}
-                            {episodes.length > 0 && (
-                                <span>{episodes.length} episodes</span>
-                            )}
+                            {episodes.length > 0 && <span>{episodes.length} episodes</span>}
                         </p>
                         {season.overview && (
                             <p className="text-sm text-gray-300 leading-relaxed">

@@ -1,5 +1,5 @@
-import { getErrorMessage } from "@/utils/error-helpers";
 import { cn } from "@/utils/css-helpers";
+import { getErrorMessage } from "@/utils/error-helpers";
 
 type Props = {
     error?: unknown;
@@ -18,13 +18,15 @@ export function SectionError({ error, message, onRetry, className }: Props) {
             className={cn(
                 "flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-400 py-4",
                 className,
-            )}>
+            )}
+        >
             <span>{text}</span>
             {onRetry && (
                 <button
                     type="button"
                     onClick={onRetry}
-                    className="text-primary hover:text-primary-hover font-medium underline-offset-2 hover:underline">
+                    className="text-primary hover:text-primary-hover font-medium underline-offset-2 hover:underline"
+                >
                     Try again
                 </button>
             )}

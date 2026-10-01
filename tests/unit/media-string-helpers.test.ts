@@ -22,8 +22,12 @@ describe("media-string-helpers", () => {
     });
 
     it("getReleaseYear extracts year", () => {
-        expect(getReleaseYear({ title: "Inception", release_date: "2010-07-16", id: 1 } as never)).toBe("2010");
-        expect(getReleaseYear({ name: "Breaking Bad", first_air_date: "2008-01-20", id: 2 } as never)).toBe("2008");
+        expect(
+            getReleaseYear({ title: "Inception", release_date: "2010-07-16", id: 1 } as never),
+        ).toBe("2010");
+        expect(
+            getReleaseYear({ name: "Breaking Bad", first_air_date: "2008-01-20", id: 2 } as never),
+        ).toBe("2008");
     });
 
     it("isMovieResult discriminates", () => {

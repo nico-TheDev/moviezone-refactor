@@ -1,15 +1,9 @@
+import { UserCircle } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { getAccountAvatarUrl } from "@/utils/avatar";
 import { cn } from "@/utils/css-helpers";
-import { UserCircle } from "lucide-react";
 
-export function UserAvatar({
-    size = 36,
-    className,
-}: {
-    size?: number;
-    className?: string;
-}) {
+export function UserAvatar({ size = 36, className }: { size?: number; className?: string }) {
     const mode = useAuthStore((s) => s.mode);
     const account = useAuthStore((s) => s.account);
 

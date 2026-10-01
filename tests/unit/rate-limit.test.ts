@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { RateLimiterMemory } from "rate-limiter-flexible";
+import { describe, expect, it } from "vitest";
 
 describe("rate limiter", () => {
     it("returns 429 behavior after threshold is exceeded", async () => {

@@ -136,7 +136,10 @@ test("home loads", async ({ page }) => {
 
 test("home navigates to media details", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: /see more/i }).first().click();
+    await page
+        .getByRole("button", { name: /see more/i })
+        .first()
+        .click();
     await expect(page).toHaveURL(/\/media\/movie\/550/);
     await expect(page.getByRole("heading", { name: "Fight Club" })).toBeVisible();
 });
@@ -183,9 +186,7 @@ test("mobile nav drawer opens", async ({ page }) => {
 });
 
 test("guest login flow", async ({ page }) => {
-    await page.route("**/api/auth/guest", (route) =>
-        route.fulfill({ json: { success: true } }),
-    );
+    await page.route("**/api/auth/guest", (route) => route.fulfill({ json: { success: true } }));
     await page.goto("/login");
     await page.getByRole("button", { name: /browse as guest/i }).click();
     await expect(page).toHaveURL("/");

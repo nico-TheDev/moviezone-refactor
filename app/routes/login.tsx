@@ -1,10 +1,10 @@
-import type { Route } from "./+types/login";
-import { createGuestSession, createRequestToken, getTmdbAuthRedirectUrl } from "@/api/auth.api";
-import { useAuthStore } from "@/stores/auth";
-import { useToast } from "@/components/ui/Toast";
-import { Navigate } from "react-router";
-import { useState } from "react";
 import { motion } from "motion/react";
+import { useState } from "react";
+import { Navigate } from "react-router";
+import { createGuestSession, createRequestToken, getTmdbAuthRedirectUrl } from "@/api/auth.api";
+import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/stores/auth";
+import type { Route } from "./+types/login";
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: "Login | MovieZone" }];
@@ -49,7 +49,8 @@ export default function LoginPage() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="max-w-md w-full bg-gray-900 border border-white/10 rounded-xl p-8 text-white">
+                className="max-w-md w-full bg-gray-900 border border-white/10 rounded-xl p-8 text-white"
+            >
                 <h1 className="text-3xl font-bold mb-2">Welcome to MovieZone</h1>
                 <p className="text-gray-400 text-sm mb-8">
                     Sign in with TMDB to manage favorites and watchlists, or browse as a guest to
@@ -60,14 +61,16 @@ export default function LoginPage() {
                         type="button"
                         onClick={handleOAuth}
                         disabled={loading !== null}
-                        className="w-full py-3 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors disabled:opacity-50">
+                        className="w-full py-3 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors disabled:opacity-50"
+                    >
                         {loading === "oauth" ? "Redirecting..." : "Login with TMDB"}
                     </button>
                     <button
                         type="button"
                         onClick={handleGuest}
                         disabled={loading !== null}
-                        className="w-full py-3 border border-white/20 hover:border-primary rounded-full font-medium transition-colors disabled:opacity-50">
+                        className="w-full py-3 border border-white/20 hover:border-primary rounded-full font-medium transition-colors disabled:opacity-50"
+                    >
                         {loading === "guest" ? "Loading..." : "Browse as Guest"}
                     </button>
                 </div>

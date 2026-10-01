@@ -1,5 +1,5 @@
-import type { Route } from "./+types/login-callback";
 import { useTmdbAuthCallback } from "@/hooks/useTmdbAuthCallback";
+import type { Route } from "./+types/login-callback";
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: "Logging in... | MovieZone" }];

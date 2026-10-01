@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
-import { renderHook } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
+import { renderHook } from "@testing-library/react";
+import { HttpResponse, http } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router";
+import { describe, expect, it, vi } from "vitest";
 import { useTmdbAuthCallback } from "@/hooks/useTmdbAuthCallback";
 import { useAuthStore } from "@/stores/auth";
-import { http, HttpResponse } from "msw";
 import { server } from "../mocks/server";
 
 const navigate = vi.fn();

@@ -1,18 +1,14 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { RateLimiterMemory } from "rate-limiter-flexible";
 import type { MiddlewareHandler } from "hono";
+import { RateLimiterMemory } from "rate-limiter-flexible";
 import { getServerEnv } from "../env";
 
 type Limiter = {
     consume: (key: string) => Promise<{ allowed: boolean; retryAfterSec: number }>;
 };
 
-function createUpstashLimiter(
-    prefix: string,
-    limit: number,
-    windowSec: number,
-): Limiter | null {
+function createUpstashLimiter(prefix: string, limit: number, windowSec: number): Limiter | null {
     const { upstashUrl, upstashToken } = getServerEnv();
     if (!upstashUrl || !upstashToken) return null;
 
@@ -98,11 +94,9 @@ export const rateLimit: MiddlewareHandler = async (c, next) => {
         const key = `${ip}:${sessionKey}`;
         const result = await limiter.consume(key);
         if (!result.allowed) {
-            return c.json(
-                { message: "Too many requests", retryAfter: result.retryAfterSec },
-                429,
-                { "Retry-After": String(result.retryAfterSec) },
-            );
+            return c.json({ message: "Too many requests", retryAfter: result.retryAfterSec }, 429, {
+                "Retry-After": String(result.retryAfterSec),
+            });
         }
     }
 

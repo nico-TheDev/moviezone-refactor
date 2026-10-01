@@ -1,6 +1,5 @@
 export function getServerEnv() {
-    const tmdbBearer =
-        process.env.TMDB_BEARER_TOKEN ?? process.env.VITE_TMDB_BEARER_TOKEN ?? "";
+    const tmdbBearer = process.env.TMDB_BEARER_TOKEN ?? process.env.VITE_TMDB_BEARER_TOKEN ?? "";
     const tmdbApiKey = process.env.TMDB_API_KEY ?? process.env.VITE_TMDB_API_KEY ?? "";
 
     return {

@@ -1,15 +1,15 @@
-import type { Route } from "./+types/person";
-import { MediaGridCard } from "@/components/MediaGridCard";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
-import { API } from "@/constants/api";
-import { personQueries } from "@/queries/person.queries";
-import { queryClient } from "@/lib/queryClient";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { ErrorState } from "@/components/ui/ErrorState";
-import type { MovieResult, TvResult } from "@/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { MediaGridCard } from "@/components/MediaGridCard";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { API } from "@/constants/api";
+import { queryClient } from "@/lib/queryClient";
+import { personQueries } from "@/queries/person.queries";
+import type { MovieResult, TvResult } from "@/types/tmdb";
+import type { Route } from "./+types/person";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
@@ -21,7 +21,8 @@ function PersonBlock({ children, index }: { children: ReactNode; index: number }
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: EASE_OUT, delay: index * 0.07 }}>
+            transition={{ duration: 0.45, ease: EASE_OUT, delay: index * 0.07 }}
+        >
             {children}
         </motion.div>
     );
@@ -44,7 +45,8 @@ function CreditCard({
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.4, ease: EASE_OUT, delay: index * 0.04 }}>
+            transition={{ duration: 0.4, ease: EASE_OUT, delay: index * 0.04 }}
+        >
             {card}
         </motion.div>
     );
@@ -54,9 +56,7 @@ export function meta({ params }: Route.MetaArgs) {
     const data = queryClient.getQueryData(personQueries.details(params.personId).queryKey);
     return [
         {
-            title: data?.person?.name
-                ? `${data.person.name} | MovieZone`
-                : "Person | MovieZone",
+            title: data?.person?.name ? `${data.person.name} | MovieZone` : "Person | MovieZone",
         },
     ];
 }
@@ -68,7 +68,9 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export default function PersonPage({ params }: Route.ComponentProps) {
     const reduce = useReducedMotion();
-    const { data, isPending, isError, error, refetch } = useQuery(personQueries.details(params.personId));
+    const { data, isPending, isError, error, refetch } = useQuery(
+        personQueries.details(params.personId),
+    );
 
     if (isPending) {
         return (
@@ -89,11 +91,7 @@ export default function PersonPage({ params }: Route.ComponentProps) {
     if (isError || !data) {
         return (
             <main className="min-h-screen bg-gray-950 py-24">
-                <ErrorState
-                    title="Person not found"
-                    error={error}
-                    onRetry={() => refetch()}
-                />
+                <ErrorState title="Person not found" error={error} onRetry={() => refetch()} />
             </main>
         );
     }
@@ -126,7 +124,8 @@ export default function PersonPage({ params }: Route.ComponentProps) {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, ease: EASE_OUT }}>
+                        transition={{ duration: 0.5, ease: EASE_OUT }}
+                    >
                         {profilePhoto}
                     </motion.div>
                 )}

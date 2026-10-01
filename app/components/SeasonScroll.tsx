@@ -1,8 +1,8 @@
-import { API } from "@/constants/api";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
-import type { TvShow } from "@/types/tmdb";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "react-router";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { API } from "@/constants/api";
+import type { TvShow } from "@/types/tmdb";
 
 type Season = NonNullable<TvShow["seasons"]>[number];
 
@@ -25,7 +25,8 @@ export function SeasonScroll({ seasons, showId }: { seasons: Season[]; showId: n
                             <Link
                                 key={season.id}
                                 to={`/media/tv/${showId}/season/${season.season_number}`}
-                                className="group flex-[0_0_140px] min-w-0 shrink-0 cursor-pointer">
+                                className="group flex-[0_0_140px] min-w-0 shrink-0 cursor-pointer"
+                            >
                                 <div className="aspect-[2/3] rounded-md overflow-hidden bg-gray-900 mb-2 border border-transparent group-hover:border-primary transition-all duration-300">
                                     {season.poster_path ? (
                                         <img

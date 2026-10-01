@@ -1,12 +1,6 @@
 import type { MediaType } from "@/types/tmdb";
 
-export type ListCategory =
-    | "popular"
-    | "toprated"
-    | "upcoming"
-    | "trending"
-    | "airing"
-    | "today";
+export type ListCategory = "popular" | "toprated" | "upcoming" | "trending" | "airing" | "today";
 
 type ListConfig = {
     title: string;
@@ -51,14 +45,8 @@ export const TV_LISTS: Record<Exclude<ListCategory, "upcoming" | "trending">, Li
     },
 };
 
-export function assertListCategory(
-    mediaType: MediaType,
-    category: string,
-): ListCategory {
-    const valid =
-        mediaType === "movie"
-            ? category in MOVIE_LISTS
-            : category in TV_LISTS;
+export function assertListCategory(mediaType: MediaType, category: string): ListCategory {
+    const valid = mediaType === "movie" ? category in MOVIE_LISTS : category in TV_LISTS;
     if (!valid) {
         throw new Response(`Unknown list category: ${category}`, { status: 404 });
     }

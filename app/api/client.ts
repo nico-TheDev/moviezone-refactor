@@ -6,13 +6,7 @@ export class ApiError extends Error {
     readonly body?: unknown;
     readonly retryAfter?: number;
 
-    constructor(
-        message: string,
-        status: number,
-        url: string,
-        body?: unknown,
-        retryAfter?: number,
-    ) {
+    constructor(message: string, status: number, url: string, body?: unknown, retryAfter?: number) {
         super(message);
         this.name = "ApiError";
         this.status = status;
@@ -50,12 +44,12 @@ export async function tmdbFetch<T>(
     }
 
     if (!response.ok) {
-        const body = (await response.json().catch(() => undefined)) as
-            | TmdbErrorBody
-            | undefined;
+        const body = (await response.json().catch(() => undefined)) as TmdbErrorBody | undefined;
         const retryAfter = Number(response.headers.get("Retry-After") ?? body?.retryAfter);
         throw new ApiError(
-            body?.status_message ?? body?.message ?? `Request failed with status ${response.status}`,
+            body?.status_message ??
+                body?.message ??
+                `Request failed with status ${response.status}`,
             response.status,
             url,
             body,

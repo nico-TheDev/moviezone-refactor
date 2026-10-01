@@ -1,5 +1,5 @@
-import { getSeasonDetails } from "@/api/media.api";
 import { queryOptions } from "@tanstack/react-query";
+import { getSeasonDetails } from "@/api/media.api";
 
 export const seasonKeys = {
     all: ["season"] as const,

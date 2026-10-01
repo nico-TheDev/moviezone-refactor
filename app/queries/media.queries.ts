@@ -1,3 +1,4 @@
+import { queryOptions } from "@tanstack/react-query";
 import {
     getDetails,
     getFeatured,
@@ -7,9 +8,8 @@ import {
     getTrendingTop10,
     getVideos,
 } from "@/api/media.api";
-import type { DetailsWithAppendByType, MediaType, MovieVideo } from "@/types/tmdb";
+import type { DetailsWithAppendByType, MediaType } from "@/types/tmdb";
 import { pickBackgroundVideo } from "@/utils/video-helpers";
-import { queryOptions } from "@tanstack/react-query";
 
 export const mediaKeys = {
     all: ["media"] as const,

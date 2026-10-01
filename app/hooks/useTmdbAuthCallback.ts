@@ -1,7 +1,7 @@
-import { createSession } from "@/api/auth.api";
-import { useAuthStore } from "@/stores/auth";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import { createSession } from "@/api/auth.api";
+import { useAuthStore } from "@/stores/auth";
 
 export function useTmdbAuthCallback() {
     const [searchParams] = useSearchParams();

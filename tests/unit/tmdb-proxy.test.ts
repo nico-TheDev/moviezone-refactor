@@ -72,9 +72,9 @@ describe("injectSessionPath", () => {
 
     it("does not duplicate guest_session_id when already present", () => {
         const c = mockContext({ mz_guest: "guest-session-456" });
-        expect(
-            injectSessionPath("/movie/550/rating?guest_session_id=existing", c),
-        ).toBe("/movie/550/rating?guest_session_id=existing");
+        expect(injectSessionPath("/movie/550/rating?guest_session_id=existing", c)).toBe(
+            "/movie/550/rating?guest_session_id=existing",
+        );
     });
 
     it("prefers user session when both cookies are present", () => {

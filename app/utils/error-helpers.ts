@@ -1,5 +1,5 @@
-import { ApiError } from "@/api/client";
 import { isRouteErrorResponse } from "react-router";
+import { ApiError } from "@/api/client";
 
 export type ErrorCopy = {
     title: string;
@@ -66,7 +66,8 @@ export function getErrorMessage(error: unknown): ErrorCopy {
 
         return {
             title: "Something went wrong",
-            message: error.statusText || `Request failed with status ${error.status}.${offlineHint}`,
+            message:
+                error.statusText || `Request failed with status ${error.status}.${offlineHint}`,
             isOffline: offline,
         };
     }

@@ -21,7 +21,8 @@ export default defineConfig({
     ],
     webServer: [
         {
-            command: "npm run build && NODE_ENV=production CLIENT_DIR=build/client tsx server/index.ts",
+            command:
+                "npm run build && NODE_ENV=production CLIENT_DIR=build/client tsx server/index.ts",
             port: 3001,
             reuseExistingServer: !process.env.CI,
             env: {

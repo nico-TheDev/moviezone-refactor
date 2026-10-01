@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { cleanup, render } from "@testing-library/react";
 import { screen } from "@testing-library/dom";
+import { cleanup, render } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { ReviewsSection } from "@/components/ReviewsSection";
 
 describe("ReviewsSection", () => {
@@ -25,11 +25,7 @@ describe("ReviewsSection", () => {
     });
 
     it("renders static card when url is missing", () => {
-        render(
-            <ReviewsSection
-                reviews={[{ author: "Anon", content: "No link." }]}
-            />,
-        );
+        render(<ReviewsSection reviews={[{ author: "Anon", content: "No link." }]} />);
 
         expect(screen.queryByRole("link")).not.toBeInTheDocument();
         expect(screen.getByText("Anon")).toBeInTheDocument();

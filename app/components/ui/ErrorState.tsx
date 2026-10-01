@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 import { Link } from "react-router";
-import { getErrorMessage } from "@/utils/error-helpers";
 import { cn } from "@/utils/css-helpers";
+import { getErrorMessage } from "@/utils/error-helpers";
 
 type Props = {
     title?: string;
@@ -36,7 +36,8 @@ export function ErrorState({
                 "flex flex-col items-center justify-center text-center text-white",
                 isSection ? "py-12 px-4" : "min-h-[50vh] p-6",
                 className,
-            )}>
+            )}
+        >
             <AlertCircle
                 className={cn("text-primary mb-4", isSection ? "size-8" : "size-12")}
                 aria-hidden
@@ -52,14 +53,16 @@ export function ErrorState({
                     <button
                         type="button"
                         onClick={onRetry}
-                        className="px-5 py-2.5 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors text-sm">
+                        className="px-5 py-2.5 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors text-sm"
+                    >
                         Try again
                     </button>
                 )}
                 {!isSection && homeHref && (
                     <Link
                         to={homeHref}
-                        className="px-5 py-2.5 border border-gray-600 hover:border-gray-400 rounded-full font-medium transition-colors text-sm">
+                        className="px-5 py-2.5 border border-gray-600 hover:border-gray-400 rounded-full font-medium transition-colors text-sm"
+                    >
                         Return to Home
                     </Link>
                 )}

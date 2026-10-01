@@ -20,7 +20,8 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.35, ease: "easeOut", delay }}>
+            transition={{ duration: 0.35, ease: "easeOut", delay }}
+        >
             {children}
         </motion.section>
     );

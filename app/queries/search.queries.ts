@@ -1,5 +1,5 @@
-import { searchMulti } from "@/api/search.api";
 import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { searchMulti } from "@/api/search.api";
 
 export const searchKeys = {
     all: ["search"] as const,

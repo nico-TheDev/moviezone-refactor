@@ -1,10 +1,10 @@
-import { API } from "@/constants/api";
-import { searchQueries } from "@/queries/search.queries";
-import { getTitle } from "@/utils/media-string-helpers";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Search as SearchIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { API } from "@/constants/api";
+import { searchQueries } from "@/queries/search.queries";
+import { getTitle } from "@/utils/media-string-helpers";
 
 function useDebounce<T>(value: T, delay: number): T {
     const [debounced, setDebounced] = useState(value);
@@ -22,9 +22,7 @@ export function SearchBar() {
     const navigate = useNavigate();
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    const { data: results, isFetching } = useQuery(
-        searchQueries.autocomplete(debouncedQuery),
-    );
+    const { data: results, isFetching } = useQuery(searchQueries.autocomplete(debouncedQuery));
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
@@ -79,7 +77,8 @@ export function SearchBar() {
                             <button
                                 type="button"
                                 className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white hover:bg-primary/20 cursor-pointer"
-                                onClick={() => handleSelect(item.media_type, item.id)}>
+                                onClick={() => handleSelect(item.media_type, item.id)}
+                            >
                                 <div className="size-10 shrink-0 rounded overflow-hidden bg-gray-800">
                                     {item.poster_path ? (
                                         <img

@@ -1,10 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export function useInfiniteScroll(
-    onLoadMore: () => void,
-    hasMore: boolean,
-    isLoading: boolean,
-) {
+export function useInfiniteScroll(onLoadMore: () => void, hasMore: boolean, isLoading: boolean) {
     const sentinelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

@@ -1,11 +1,11 @@
-import type { Route } from "./+types/list";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { MediaGrid } from "@/components/MediaGrid";
 import { AnimatedPageHeader } from "@/components/ui/AnimatedPageHeader";
 import { assertListCategory, getListConfig } from "@/constants/lists";
 import { listQueries } from "@/queries/list.queries";
 import { assertMediaType } from "@/utils/media-string-helpers";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import type { Route } from "./+types/list";
 
 export function meta({ params }: Route.MetaArgs) {
     const mediaType = assertMediaType(params.mediaType);
@@ -19,14 +19,21 @@ export default function ListPage({ params }: Route.ComponentProps) {
     const category = assertListCategory(mediaType, params.category);
     const config = getListConfig(mediaType, category);
 
-    const { data, isPending, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
-        useInfiniteQuery(listQueries.infinite(mediaType, category));
+    const {
+        data,
+        isPending,
+        isError,
+        error,
+        refetch,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+    } = useInfiniteQuery(listQueries.infinite(mediaType, category));
 
     const items = useMemo(
         () =>
-            data?.pages.flatMap((page) =>
-                page.results.map((media) => ({ media, mediaType })),
-            ) ?? [],
+            data?.pages.flatMap((page) => page.results.map((media) => ({ media, mediaType }))) ??
+            [],
         [data, mediaType],
     );
 

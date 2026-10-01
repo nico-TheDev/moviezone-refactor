@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { deleteCookie, setCookie } from "hono/cookie";
-import type { Context } from "hono";
 import { assertServerEnv } from "./env";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
@@ -41,14 +40,11 @@ export function createAuthRoutes() {
             return c.json({ message: "request_token required" }, 400);
         }
 
-        const session = await tmdbAuthFetch<{ session_id: string }>(
-            "/authentication/session/new",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ request_token: body.request_token }),
-            },
-        );
+        const session = await tmdbAuthFetch<{ session_id: string }>("/authentication/session/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ request_token: body.request_token }),
+        });
 
         deleteCookie(c, "mz_guest", { path: "/" });
         setCookie(c, "mz_session", session.session_id, COOKIE_OPTS);
@@ -72,17 +68,14 @@ export function createAuthRoutes() {
         const sessionId = c.req.header("cookie")?.match(/mz_session=([^;]+)/)?.[1];
         if (sessionId) {
             const env = assertServerEnv();
-            await fetch(
-                `${TMDB_BASE}/authentication/session?api_key=${env.tmdbApiKey}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                        accept: "application/json",
-                    },
-                    body: JSON.stringify({ session_id: sessionId }),
+            await fetch(`${TMDB_BASE}/authentication/session?api_key=${env.tmdbApiKey}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    accept: "application/json",
                 },
-            ).catch(() => undefined);
+                body: JSON.stringify({ session_id: sessionId }),
+            }).catch(() => undefined);
         }
 
         deleteCookie(c, "mz_session", { path: "/" });

@@ -1,6 +1,6 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
-import { Link } from "react-router";
 import { X } from "lucide-react";
+import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { Link } from "react-router";
 
 type ToastMessage = {
     id: number;
@@ -34,7 +34,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 {toasts.map((toast) => (
                     <div
                         key={toast.id}
-                        className="bg-gray-900 text-white border border-white/10 rounded-lg p-4 shadow-lg flex items-start gap-3">
+                        className="bg-gray-900 text-white border border-white/10 rounded-lg p-4 shadow-lg flex items-start gap-3"
+                    >
                         <p className="text-sm flex-1">
                             {toast.message}{" "}
                             {toast.loginLink && (
@@ -46,7 +47,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                         <button
                             type="button"
                             onClick={() => dismiss(toast.id)}
-                            className="text-gray-400 hover:text-white">
+                            className="text-gray-400 hover:text-white"
+                        >
                             <X size={16} />
                         </button>
                     </div>

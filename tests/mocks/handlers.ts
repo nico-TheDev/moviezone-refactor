@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
 
 export const handlers = [
     http.get("/api/tmdb/discover/movie", () =>
@@ -24,9 +24,7 @@ export const handlers = [
             total_results: 1,
         }),
     ),
-    http.get("/api/auth/request-token", () =>
-        HttpResponse.json({ request_token: "test-token" }),
-    ),
+    http.get("/api/auth/request-token", () => HttpResponse.json({ request_token: "test-token" })),
     http.post("/api/auth/guest", () => HttpResponse.json({ success: true })),
     http.post("/api/auth/session", () =>
         HttpResponse.json({

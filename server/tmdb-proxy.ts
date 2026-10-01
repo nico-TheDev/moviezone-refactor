@@ -1,7 +1,7 @@
-import { getCookie } from "hono/cookie";
 import type { Context } from "hono";
-import { assertServerEnv } from "./env";
+import { getCookie } from "hono/cookie";
 import { getCacheTtlMs, isCacheableGet, readCache, writeCache } from "./cache";
+import { assertServerEnv } from "./env";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
@@ -19,7 +19,11 @@ export function injectSessionPath(path: string, c: Context): string {
 
     if (guestSession && resolved.startsWith("/guest_session/rated")) {
         resolved = resolved.replace("/guest_session/rated", `/guest_session/${guestSession}/rated`);
-    } else if (guestSession && resolved.startsWith("/guest_session/") && !resolved.includes(guestSession)) {
+    } else if (
+        guestSession &&
+        resolved.startsWith("/guest_session/") &&
+        !resolved.includes(guestSession)
+    ) {
         resolved = resolved.replace("/guest_session/", `/guest_session/${guestSession}/`);
     }
 

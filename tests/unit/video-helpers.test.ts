@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { pickBackgroundVideo } from "@/utils/video-helpers";
 import type { MovieVideo } from "@/types/tmdb";
+import { pickBackgroundVideo } from "@/utils/video-helpers";
 
 describe("pickBackgroundVideo", () => {
     it("prefers official English trailer", () => {

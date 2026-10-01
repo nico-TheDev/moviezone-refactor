@@ -1,6 +1,6 @@
+import { motion, useReducedMotion } from "motion/react";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import type { MovieReviewsResponse } from "@/types/tmdb";
-import { motion, useReducedMotion } from "motion/react";
 
 type Review = NonNullable<MovieReviewsResponse["results"]>[number];
 
@@ -24,11 +24,7 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
     );
 
     const card = href ? (
-        <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkedCardClassName}>
+        <a href={href} target="_blank" rel="noopener noreferrer" className={linkedCardClassName}>
             {content}
         </a>
     ) : (
@@ -45,7 +41,8 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.05 }}>
+            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.05 }}
+        >
             {card}
         </motion.div>
     );

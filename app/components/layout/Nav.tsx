@@ -1,11 +1,11 @@
-import { NAV_MOVIE_LINKS, NAV_TV_LINKS } from "@/constants/lists";
-import { UserAvatar } from "@/components/UserAvatar";
-import { useAuthStore } from "@/stores/auth";
 import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
+import { UserAvatar } from "@/components/UserAvatar";
+import { NAV_MOVIE_LINKS, NAV_TV_LINKS } from "@/constants/lists";
+import { useAuthStore } from "@/stores/auth";
 import { SearchBar } from "../SearchBar";
-import { motion, AnimatePresence } from "motion/react";
 
 function NavDropdown({
     label,
@@ -22,11 +22,13 @@ function NavDropdown({
         <li
             className="relative"
             onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}>
+            onMouseLeave={() => setOpen(false)}
+        >
             <button
                 type="button"
                 className="hover:text-primary transition-colors"
-                onClick={() => setOpen((v) => !v)}>
+                onClick={() => setOpen((v) => !v)}
+            >
                 {label}
             </button>
             <AnimatePresence>
@@ -35,13 +37,15 @@ function NavDropdown({
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -4 }}
-                        className="absolute top-full left-0 mt-2 bg-gray-900 border border-white/10 rounded-md py-2 min-w-[160px] z-[1000]">
+                        className="absolute top-full left-0 mt-2 bg-gray-900 border border-white/10 rounded-md py-2 min-w-[160px] z-[1000]"
+                    >
                         {links.map((link) => (
                             <li key={link.category}>
                                 <NavLink
                                     to={`/list/${mediaType}/${link.category}`}
                                     className="block px-4 py-2 text-sm text-white hover:bg-primary/20 hover:text-primary"
-                                    onClick={() => setOpen(false)}>
+                                    onClick={() => setOpen(false)}
+                                >
                                     {link.label}
                                 </NavLink>
                             </li>
@@ -95,7 +99,8 @@ export function Nav() {
                     type="button"
                     className="md:hidden text-white"
                     onClick={() => setMobileOpen(true)}
-                    aria-label="Open menu">
+                    aria-label="Open menu"
+                >
                     <Menu size={28} />
                 </button>
             </div>
@@ -115,13 +120,15 @@ export function Nav() {
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-gray-900 z-[1001] p-6 text-white md:hidden overflow-y-auto">
+                            className="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-gray-900 z-[1001] p-6 text-white md:hidden overflow-y-auto"
+                        >
                             <div className="flex justify-between items-center mb-8">
                                 <span className="font-semibold">Menu</span>
                                 <button
                                     type="button"
                                     onClick={() => setMobileOpen(false)}
-                                    aria-label="Close menu">
+                                    aria-label="Close menu"
+                                >
                                     <X size={24} />
                                 </button>
                             </div>
@@ -139,7 +146,8 @@ export function Nav() {
                                                 <NavLink
                                                     to={`/list/movie/${link.category}`}
                                                     onClick={() => setMobileOpen(false)}
-                                                    className="block py-1 hover:text-primary">
+                                                    className="block py-1 hover:text-primary"
+                                                >
                                                     {link.label}
                                                 </NavLink>
                                             </li>
@@ -154,7 +162,8 @@ export function Nav() {
                                                 <NavLink
                                                     to={`/list/tv/${link.category}`}
                                                     onClick={() => setMobileOpen(false)}
-                                                    className="block py-1 hover:text-primary">
+                                                    className="block py-1 hover:text-primary"
+                                                >
                                                     {link.label}
                                                 </NavLink>
                                             </li>
@@ -166,7 +175,8 @@ export function Nav() {
                                         <NavLink
                                             to="/profile"
                                             onClick={() => setMobileOpen(false)}
-                                            className="flex items-center gap-3 py-2 hover:text-primary">
+                                            className="flex items-center gap-3 py-2 hover:text-primary"
+                                        >
                                             <UserAvatar size={28} />
                                             Profile
                                         </NavLink>
@@ -175,13 +185,15 @@ export function Nav() {
                                             <NavLink
                                                 to="/login"
                                                 onClick={() => setMobileOpen(false)}
-                                                className="block py-2 hover:text-primary">
+                                                className="block py-2 hover:text-primary"
+                                            >
                                                 Login
                                             </NavLink>
                                             <Link
                                                 to="/login"
                                                 onClick={() => setMobileOpen(false)}
-                                                className="block py-2 text-gray-400 hover:text-primary">
+                                                className="block py-2 text-gray-400 hover:text-primary"
+                                            >
                                                 Browse as Guest
                                             </Link>
                                         </>

@@ -1,7 +1,7 @@
-import { MOTION_DURATION, MOTION_EASE_OUT } from "@/lib/motion";
-import { cn } from "@/utils/css-helpers";
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { MOTION_DURATION, MOTION_EASE_OUT } from "@/lib/motion";
+import { cn } from "@/utils/css-helpers";
 
 export function AnimatedPageHeader({
     children,
@@ -21,7 +21,8 @@ export function AnimatedPageHeader({
             className={cn(className)}
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: MOTION_DURATION, ease: MOTION_EASE_OUT }}>
+            transition={{ duration: MOTION_DURATION, ease: MOTION_EASE_OUT }}
+        >
             {children}
         </motion.div>
     );

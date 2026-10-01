@@ -96,9 +96,7 @@ export const getAccountStates = async (
 };
 
 export const getFavoriteMovies = (accountId: number, page: number) =>
-    tmdbFetch<PaginatedResponse<MovieResult>>(
-        `/account/${accountId}/favorite/movies?page=${page}`,
-    );
+    tmdbFetch<PaginatedResponse<MovieResult>>(`/account/${accountId}/favorite/movies?page=${page}`);
 
 export const getFavoriteTv = (accountId: number, page: number) =>
     tmdbFetch<PaginatedResponse<TvResult>>(`/account/${accountId}/favorite/tv?page=${page}`);
