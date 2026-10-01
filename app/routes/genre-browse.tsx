@@ -1,4 +1,6 @@
-import type { Route } from "./+types/genre-browse";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { GenreMultiSelect } from "@/components/GenreMultiSelect";
 import { MediaGrid } from "@/components/MediaGrid";
 import { AnimatedFadeIn } from "@/components/ui/AnimatedFadeIn";
@@ -6,6 +8,7 @@ import { AnimatedPageHeader } from "@/components/ui/AnimatedPageHeader";
 import { listQueries } from "@/queries/list.queries";
 import { mediaQueries } from "@/queries/media.queries";
 import type { MediaType } from "@/types/tmdb";
+import { cn } from "@/utils/css-helpers";
 import {
     buildGenreBrowseUrl,
     formatGenreTitle,
@@ -13,12 +16,9 @@ import {
     parseGenreIds,
 } from "@/utils/genre-helpers";
 import { assertMediaType } from "@/utils/media-string-helpers";
-import { cn } from "@/utils/css-helpers";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import type { Route } from "./+types/genre-browse";
 
-export function meta({ params }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
     return [{ title: `Genre | MovieZone` }];
 }
 
@@ -30,7 +30,6 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
         () => parseGenreIds(params.id, searchParams.get("genres")),
         [params.id, searchParams],
     );
-    const genreKey = genreIds.join(",");
 
     const { data: genres, isPending: genresPending } = useQuery(mediaQueries.genres(mediaType));
     const { data: movieGenres } = useQuery(mediaQueries.genres("movie"));
@@ -38,30 +37,32 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
 
     const genreTitle = formatGenreTitle(genreIds, genres ?? new Map(), params.slug);
 
-    const { data, isPending, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
-        useInfiniteQuery({
-            ...listQueries.genreInfinite(mediaType, genreIds),
-            enabled: genreIds.length > 0,
-        });
-
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    }, [mediaType, genreKey]);
+    const {
+        data,
+        isPending,
+        isError,
+        error,
+        refetch,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+    } = useInfiniteQuery({
+        ...listQueries.genreInfinite(mediaType, genreIds),
+        enabled: genreIds.length > 0,
+    });
 
     const items = useMemo(
         () =>
-            data?.pages.flatMap((page) =>
-                page.results.map((media) => ({ media, mediaType })),
-            ) ?? [],
+            data?.pages.flatMap((page) => page.results.map((media) => ({ media, mediaType }))) ??
+            [],
         [data, mediaType],
     );
 
     const navigateWithGenres = (nextMediaType: MediaType, nextGenreIds: number[]) => {
         const names =
-            nextMediaType === "movie"
-                ? (movieGenres ?? new Map())
-                : (tvGenres ?? new Map());
+            nextMediaType === "movie" ? (movieGenres ?? new Map()) : (tvGenres ?? new Map());
         navigate(buildGenreBrowseUrl(nextMediaType, nextGenreIds, names));
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const handleGenreChange = (nextIds: number[]) => {
@@ -70,8 +71,10 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
 
     const handleMediaTypeChange = (nextMediaType: MediaType) => {
         if (nextMediaType === mediaType) return;
-        const fromNames = mediaType === "movie" ? (movieGenres ?? new Map()) : (tvGenres ?? new Map());
-        const toGenres = nextMediaType === "movie" ? (movieGenres ?? new Map()) : (tvGenres ?? new Map());
+        const fromNames =
+            mediaType === "movie" ? (movieGenres ?? new Map()) : (tvGenres ?? new Map());
+        const toGenres =
+            nextMediaType === "movie" ? (movieGenres ?? new Map()) : (tvGenres ?? new Map());
         const mappedIds = mapGenreIdsAcrossMediaType(genreIds, fromNames, toGenres);
         navigateWithGenres(nextMediaType, mappedIds);
     };
@@ -87,7 +90,8 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
 
             <AnimatedFadeIn
                 className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-8"
-                delay={0.06}>
+                delay={0.06}
+            >
                 <div className="flex flex-col gap-1.5">
                     <span className="text-xs text-gray-400 uppercase tracking-wide">Type</span>
                     <div className="flex items-center border rounded-md border-primary w-fit">
@@ -99,7 +103,8 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
                                     ? "bg-primary text-white"
                                     : "text-primary hover:bg-primary hover:text-white",
                             )}
-                            onClick={() => handleMediaTypeChange("movie")}>
+                            onClick={() => handleMediaTypeChange("movie")}
+                        >
                             Movies
                         </button>
                         <button
@@ -110,7 +115,8 @@ export default function GenreBrowsePage({ params }: Route.ComponentProps) {
                                     ? "bg-primary text-white"
                                     : "text-primary hover:bg-primary hover:text-white",
                             )}
-                            onClick={() => handleMediaTypeChange("tv")}>
+                            onClick={() => handleMediaTypeChange("tv")}
+                        >
                             TV Shows
                         </button>
                     </div>

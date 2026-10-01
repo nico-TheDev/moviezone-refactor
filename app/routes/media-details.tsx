@@ -1,28 +1,28 @@
-import type { Route } from "./+types/media-details";
-import { queryClient } from "@/lib/queryClient";
-import { mediaQueries } from "@/queries/media.queries";
-import type { CastMember, MediaType, Movie, MovieVideo, TvShow } from "@/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
-import VideoBackground from "@/components/VideoBackground";
-import { assertMediaType, getReleaseYear, getTitle } from "@/utils/media-string-helpers";
 import { StarIcon } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { type ReactNode, useState } from "react";
+import { Link } from "react-router";
+import { getAccountStates } from "@/api/account.api";
+import { getAllVideos } from "@/api/media.api";
 import GenreList from "@/components/GenreList";
-import { API } from "@/constants/api";
+import { MediaActionButtons } from "@/components/MediaActionButtons";
 import { MediaCarousel } from "@/components/MediaCarousel";
 import { MediaDetailsSkeleton } from "@/components/MediaDetailsSkeleton";
+import { RatingWidget } from "@/components/RatingWidget";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { SeasonScroll } from "@/components/SeasonScroll";
 import { TrailerModal } from "@/components/TrailerModal";
-import { MediaActionButtons } from "@/components/MediaActionButtons";
-import { RatingWidget } from "@/components/RatingWidget";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
-import { getAccountStates } from "@/api/account.api";
-import { getAllVideos } from "@/api/media.api";
-import { useAuthStore } from "@/stores/auth";
-import { motion, useReducedMotion } from "motion/react";
-import { useState, type ReactNode } from "react";
 import { ErrorState } from "@/components/ui/ErrorState";
-import { Link } from "react-router";
+import VideoBackground from "@/components/VideoBackground";
+import { API } from "@/constants/api";
+import { queryClient } from "@/lib/queryClient";
+import { mediaQueries } from "@/queries/media.queries";
+import { useAuthStore } from "@/stores/auth";
+import type { CastMember, Movie, MovieVideo, TvShow } from "@/types/tmdb";
+import { assertMediaType, getReleaseYear, getTitle } from "@/utils/media-string-helpers";
+import type { Route } from "./+types/media-details";
 
 function isMovie(media: Movie | TvShow): media is Movie {
     return "title" in media;
@@ -57,7 +57,8 @@ function HeroBlock({ children, index }: { children: ReactNode; index: number }) 
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.06 }}>
+            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.06 }}
+        >
             {children}
         </motion.div>
     );
@@ -68,7 +69,8 @@ function CastCard({ cast, index }: { cast: CastMember; index: number }) {
     const card = (
         <Link
             to={`/person/${cast.id}`}
-            className="flex items-center gap-4 justify-between bg-gray-900/80 p-4 rounded-lg shadow-lg border border-transparent hover:border-primary transition-all duration-300">
+            className="flex items-center gap-4 justify-between bg-gray-900/80 p-4 rounded-lg shadow-lg border border-transparent hover:border-primary transition-all duration-300"
+        >
             <img
                 src={
                     cast.profile_path ? API.IMAGE_PROFILE_URL + cast.profile_path : "/img/logo.png"
@@ -90,7 +92,8 @@ function CastCard({ cast, index }: { cast: CastMember; index: number }) {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.04 }}>
+            transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.04 }}
+        >
             {card}
         </motion.div>
     );
@@ -143,7 +146,8 @@ export default function MediaDetails({ params }: Route.ComponentProps) {
             <main className="bg-black text-white">
                 <VideoBackground
                     backdropPath={mediaData.backdrop_path}
-                    youtubeId={mediaData.videos?.key}>
+                    youtubeId={mediaData.videos?.key}
+                >
                     <div className="relative z-10 max-w-[90%] mx-auto p-6 mt-32 sm:mt-48 md:mt-64 lg:mt-80">
                         <div className="p-4">
                             <HeroBlock index={heroIndex++}>

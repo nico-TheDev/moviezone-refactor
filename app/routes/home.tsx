@@ -1,13 +1,13 @@
-import type { Route } from "./+types/home";
+import { useQuery } from "@tanstack/react-query";
+import { motion } from "motion/react";
+import { useState } from "react";
 import { HeroFeaturedCarousel } from "@/components/HeroFeaturedCarousel";
 import { HeroFeaturedSkeleton } from "@/components/HeroFeaturedSkeleton";
 import { MediaCarousel } from "@/components/MediaCarousel";
+import { SectionError } from "@/components/ui/SectionError";
 import { mediaQueries } from "@/queries/media.queries";
 import type { MediaType } from "@/types/tmdb";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { motion } from "motion/react";
-import { SectionError } from "@/components/ui/SectionError";
+import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -149,7 +149,7 @@ export default function Home() {
                         />
                     </div>
                 ) : (
-                    <HeroFeaturedCarousel items={trendingMovies.data ?? []} mediaType="movie" />
+                    <HeroFeaturedCarousel items={trendingMovies.data ?? []} />
                 )}
             </main>
 
@@ -166,7 +166,8 @@ export default function Home() {
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-80px" }}
-                        transition={{ duration: 0.4, delay: index * 0.05 }}>
+                        transition={{ duration: 0.4, delay: index * 0.05 }}
+                    >
                         {content}
                     </motion.section>
                 ))}

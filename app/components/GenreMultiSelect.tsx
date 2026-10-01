@@ -1,7 +1,7 @@
-import { formatGenreSelectionLabel } from "@/utils/genre-helpers";
-import { cn } from "@/utils/css-helpers";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/utils/css-helpers";
+import { formatGenreSelectionLabel } from "@/utils/genre-helpers";
 
 export function GenreMultiSelect({
     genreIds,
@@ -59,7 +59,7 @@ export function GenreMultiSelect({
                     "focus:outline-none focus:border-primary disabled:opacity-50",
                 )}
                 aria-expanded={open}
-                aria-haspopup="listbox">
+            >
                 <span className="truncate">{label}</span>
                 <ChevronDown
                     size={16}
@@ -68,14 +68,11 @@ export function GenreMultiSelect({
             </button>
 
             {open && (
-                <ul
-                    role="listbox"
-                    aria-multiselectable
-                    className="absolute top-full left-0 z-50 mt-2 w-full max-h-64 overflow-y-auto rounded-md border border-white/10 bg-gray-900 py-2 shadow-lg">
+                <ul className="absolute top-full left-0 z-50 mt-2 w-full max-h-64 overflow-y-auto rounded-md border border-white/10 bg-gray-900 py-2 shadow-lg">
                     {options.map(([id, name]) => {
                         const checked = genreIds.includes(id);
                         return (
-                            <li key={id} role="option" aria-selected={checked}>
+                            <li key={id}>
                                 <label className="flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-white hover:bg-primary/20">
                                     <input
                                         type="checkbox"

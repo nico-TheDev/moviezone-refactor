@@ -1,13 +1,14 @@
-import type { MediaType, Movie, MovieResult, TvResult, TvShow } from "@/types/tmdb";
-import useEmblaCarousel from "embla-carousel-react";
-import React, { useCallback, useEffect, useState } from "react";
 import type { EmblaCarouselType, EmblaOptionsType } from "embla-carousel";
-import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
-import { API } from "@/constants/api";
+import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, StarIcon } from "lucide-react";
-import { cn } from "@/utils/css-helpers";
-import { MediaCarouselSkeleton } from "./MediaCarouselSkeleton";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { API } from "@/constants/api";
+import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
+import { cn } from "@/utils/css-helpers";
+import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
+import { MediaCarouselSkeleton } from "./MediaCarouselSkeleton";
 import { SectionError } from "./ui/SectionError";
 
 type UsePrevNextButtonsType = {
@@ -62,7 +63,8 @@ export const PrevButton = ({
         <button
             type="button"
             className={`disabled:opacity-50 disabled:cursor-not-allowed ${className ?? ""}`}
-            {...restProps}>
+            {...restProps}
+        >
             <ChevronLeft size={40} />
             {children}
         </button>
@@ -78,7 +80,8 @@ export const NextButton = ({
         <button
             type="button"
             className={`disabled:opacity-50 disabled:cursor-not-allowed ${className ?? ""}`}
-            {...restProps}>
+            {...restProps}
+        >
             <ChevronRight size={40} />
             {children}
         </button>
@@ -101,18 +104,22 @@ function MediaCard({
     const navigate = useNavigate();
 
     return (
-        <div
+        <button
+            type="button"
             className={cn(
-                "min-w-0 group/card-img cursor-pointer pr-4",
-                orientation === "landscape" ? "flex-[0_0_200px] md:flex-[0_0_300px]" : "flex-[0_0_160px] md:flex-[0_0_250px]",
+                "min-w-0 group/card-img cursor-pointer pr-4 text-left",
+                orientation === "landscape"
+                    ? "flex-[0_0_200px] md:flex-[0_0_300px]"
+                    : "flex-[0_0_160px] md:flex-[0_0_250px]",
             )}
-            key={media.id}
-            onClick={() => navigate(`/media/${mediaType}/${media.id}`)}>
+            onClick={() => navigate(`/media/${mediaType}/${media.id}`)}
+        >
             <div
                 className={cn(
                     "overflow-hidden mb-2 rounded-md cursor-pointer relative",
                     orientation === "landscape" ? "h-40" : "h-100",
-                )}>
+                )}
+            >
                 <img
                     src={
                         orientation === "landscape"
@@ -151,7 +158,7 @@ function MediaCard({
                     </span>
                 </div>
             </div>
-        </div>
+        </button>
     );
 }
 
@@ -217,21 +224,26 @@ export function MediaCarousel({
                     className={cn(
                         " items-center border rounded-md border-primary",
                         showMediaTypeSelector ? "flex" : "hidden",
-                    )}>
+                    )}
+                >
                     <button
+                        type="button"
                         className={cn(
                             "font-medium px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer border-r border-primary",
                             mediaType === "movie" && "bg-primary text-white",
                         )}
-                        onClick={() => setMediaType("movie")}>
+                        onClick={() => setMediaType("movie")}
+                    >
                         Movies
                     </button>
                     <button
+                        type="button"
                         className={cn(
                             "px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer",
                             mediaType === "tv" && "bg-primary text-white",
                         )}
-                        onClick={() => setMediaType("tv")}>
+                        onClick={() => setMediaType("tv")}
+                    >
                         Series
                     </button>
                 </div>

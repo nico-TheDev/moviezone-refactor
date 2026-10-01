@@ -17,28 +17,31 @@ export function MediaCarouselSkeleton({ title, orientation = "landscape", count 
             <div className="relative">
                 <div className="overflow-hidden">
                     <div className="flex">
-                        {Array.from({ length: count }).map((_, index) => (
-                            <div
-                                key={index}
-                                className={cn(
-                                    "min-w-0 pr-4",
-                                    orientation === "landscape"
-                                        ? "flex-[0_0_300px]"
-                                        : "flex-[0_0_250px]",
-                                )}>
-                                <Skeleton
+                        {Array.from({ length: count }, (_, index) => `slide-${index}`).map(
+                            (slideKey) => (
+                                <div
+                                    key={slideKey}
                                     className={cn(
-                                        "w-full mb-2",
-                                        orientation === "landscape" ? "h-40" : "h-100",
+                                        "min-w-0 pr-4",
+                                        orientation === "landscape"
+                                            ? "flex-[0_0_300px]"
+                                            : "flex-[0_0_250px]",
                                     )}
-                                />
-                                <Skeleton className="h-4 w-3/4 mb-2" />
-                                <div className="flex items-center gap-2">
-                                    <Skeleton className="h-3 w-10" />
-                                    <Skeleton className="h-3 w-12" />
+                                >
+                                    <Skeleton
+                                        className={cn(
+                                            "w-full mb-2",
+                                            orientation === "landscape" ? "h-40" : "h-100",
+                                        )}
+                                    />
+                                    <Skeleton className="h-4 w-3/4 mb-2" />
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="h-3 w-10" />
+                                        <Skeleton className="h-3 w-12" />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ),
+                        )}
                     </div>
                 </div>
             </div>

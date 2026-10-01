@@ -1,12 +1,12 @@
-import { API } from "@/constants/api";
 import useEmblaCarousel from "embla-carousel-react";
-import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { InfoIcon, StarIcon } from "lucide-react";
-import GenreList from "@/components/GenreList";
-import { useNavigate } from "react-router";
-import { getReleaseYear, getTitle, isMovieResult } from "@/utils/media-string-helpers";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { motion, useReducedMotion, type Variants } from "motion/react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import GenreList from "@/components/GenreList";
+import { API } from "@/constants/api";
+import type { MovieResult, TvResult } from "@/types/tmdb";
+import { getReleaseYear, getTitle, isMovieResult } from "@/utils/media-string-helpers";
 
 const AUTOPLAY_DELAY = 5000;
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
@@ -42,7 +42,8 @@ function HeroContentBlock({
         <motion.div
             variants={contentItem}
             initial="hidden"
-            animate={isActive ? "visible" : "hidden"}>
+            animate={isActive ? "visible" : "hidden"}
+        >
             {children}
         </motion.div>
     );
@@ -114,7 +115,8 @@ function HeroFeaturedItem({
                                     navigate(`/media/${mediaType}/${mediaData.id}`, {
                                         replace: true,
                                     })
-                                }>
+                                }
+                            >
                                 <InfoIcon size={20} className="inline-block text-white" />
                                 See More
                             </button>
@@ -125,7 +127,8 @@ function HeroFeaturedItem({
                         className="p-4"
                         variants={contentContainer}
                         initial="hidden"
-                        animate={isActive ? "visible" : "hidden"}>
+                        animate={isActive ? "visible" : "hidden"}
+                    >
                         <HeroContentBlock isActive={isActive} reduce={reduce}>
                             <h3 className="text-2xl md:text-4xl font-display mb-4 max-w-2xl">
                                 {getTitle(mediaData)}
@@ -165,7 +168,8 @@ function HeroFeaturedItem({
                                         navigate(`/media/${mediaType}/${mediaData.id}`, {
                                             replace: true,
                                         })
-                                    }>
+                                    }
+                                >
                                     <InfoIcon size={20} className="inline-block text-white" />
                                     See More
                                 </motion.button>
@@ -180,12 +184,11 @@ function HeroFeaturedItem({
 
 interface IProps {
     items: MovieResult[] | TvResult[];
-    mediaType: MediaType;
 }
 
 type FeaturedItem = MovieResult | TvResult;
 
-export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
+export function HeroFeaturedCarousel({ items }: IProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
     const [selectedIndex, setSelectedIndex] = useState(0);
     const reduce = useReducedMotion();
@@ -221,7 +224,8 @@ export function HeroFeaturedCarousel({ items, mediaType }: IProps) {
             ref={emblaRef}
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, ease: EASE_OUT }}>
+            transition={{ duration: 0.6, ease: EASE_OUT }}
+        >
             <div className="flex touch-pan-y touch-pinch-zoom h-full w-full">
                 {(items as FeaturedItem[]).map((item, index) => (
                     <HeroFeaturedItem

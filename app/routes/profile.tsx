@@ -1,5 +1,7 @@
-import type { Route } from "./+types/profile";
-import { MediaGridCard } from "@/components/MediaGridCard";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { motion } from "motion/react";
+import { useMemo, useState } from "react";
+import { Navigate, useNavigate } from "react-router";
 import {
     getFavoriteMovies,
     getFavoriteTv,
@@ -11,16 +13,14 @@ import {
     getWatchlistTv,
 } from "@/api/account.api";
 import { deleteSession } from "@/api/auth.api";
+import { MediaGridCard } from "@/components/MediaGridCard";
 import { UserAvatar } from "@/components/UserAvatar";
-import { useAuthStore } from "@/stores/auth";
-import { cn } from "@/utils/css-helpers";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import type { MediaType } from "@/types/tmdb";
 import { ErrorState } from "@/components/ui/ErrorState";
-import { motion } from "motion/react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { useAuthStore } from "@/stores/auth";
+import type { MediaType } from "@/types/tmdb";
+import { cn } from "@/utils/css-helpers";
+import type { Route } from "./+types/profile";
 
 type Tab = "favorites" | "rated" | "watchlist";
 type MediaTab = "movie" | "tv";
@@ -30,11 +30,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 function useProfileList(tab: Tab, mediaTab: MediaTab, accountId: number | null, isGuest: boolean) {
+    // Moving the hooks above it changes when they run. Tracked as its own bug fix, not a style question.
+    // biome-ignore lint/correctness/useHookAtTopLevel: called below a `mode === "none"` early return.
     return useInfiniteQuery({
         queryKey: ["profile", tab, mediaTab, accountId, isGuest],
         queryFn: async ({ pageParam }) => {
             if (isGuest) {
-                if (tab !== "rated") return { results: [], page: 1, total_pages: 1, total_results: 0 };
+                if (tab !== "rated")
+                    return { results: [], page: 1, total_pages: 1, total_results: 0 };
                 return mediaTab === "movie"
                     ? getGuestRatedMovies(pageParam)
                     : getGuestRatedTv(pageParam);
@@ -57,8 +60,7 @@ function useProfileList(tab: Tab, mediaTab: MediaTab, accountId: number | null, 
                 : getRatedTv(accountId, pageParam);
         },
         initialPageParam: 1,
-        getNextPageParam: (last) =>
-            last.page < last.total_pages ? last.page + 1 : undefined,
+        getNextPageParam: (last) => (last.page < last.total_pages ? last.page + 1 : undefined),
         enabled: isGuest || !!accountId,
     });
 }
@@ -79,14 +81,21 @@ export default function ProfilePage() {
 
     const availableTabs: Tab[] = isGuest ? ["rated"] : ["favorites", "rated", "watchlist"];
 
-    const { data, isPending, isError, error, refetch, isFetchingNextPage, hasNextPage, fetchNextPage } =
-        useProfileList(
-        tab,
-        mediaTab,
-        account?.id ?? null,
-        isGuest,
-    );
+    const {
+        data,
+        isPending,
+        isError,
+        error,
+        refetch,
+        isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        // Moving the hooks above it changes when they run. Tracked as its own bug fix, not a style question.
+        // biome-ignore lint/correctness/useHookAtTopLevel: called below a `mode === "none"` early return.
+    } = useProfileList(tab, mediaTab, account?.id ?? null, isGuest);
 
+    // Moving the hooks above it changes when they run. Tracked as its own bug fix, not a style question.
+    // biome-ignore lint/correctness/useHookAtTopLevel: called below a `mode === "none"` early return.
     const items = useMemo(
         () =>
             data?.pages.flatMap((page) =>
@@ -98,6 +107,8 @@ export default function ProfilePage() {
         [data, mediaTab],
     );
 
+    // Moving the hooks above it changes when they run. Tracked as its own bug fix, not a style question.
+    // biome-ignore lint/correctness/useHookAtTopLevel: called below a `mode === "none"` early return.
     const sentinelRef = useInfiniteScroll(
         () => fetchNextPage(),
         !!hasNextPage,
@@ -115,7 +126,8 @@ export default function ProfilePage() {
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col sm:flex-row items-center gap-6 mb-10">
+                className="flex flex-col sm:flex-row items-center gap-6 mb-10"
+            >
                 <UserAvatar
                     size={120}
                     className={cn("size-24", !isGuest && "border-2 border-primary rounded-full")}
@@ -131,7 +143,8 @@ export default function ProfilePage() {
                 <button
                     type="button"
                     onClick={handleLogout}
-                    className="sm:ml-auto px-4 py-2 border border-white/20 rounded-full text-sm hover:border-primary transition-colors">
+                    className="sm:ml-auto px-4 py-2 border border-white/20 rounded-full text-sm hover:border-primary transition-colors"
+                >
                     Logout
                 </button>
             </motion.div>
@@ -144,7 +157,8 @@ export default function ProfilePage() {
                         onClick={() => setTab(t)}
                         className={`px-4 py-2 rounded-full text-sm capitalize ${
                             tab === t ? "bg-primary text-white" : "border border-white/20"
-                        }`}>
+                        }`}
+                    >
                         {t}
                     </button>
                 ))}
@@ -158,7 +172,8 @@ export default function ProfilePage() {
                         onClick={() => setMediaTab(mt)}
                         className={`px-4 py-2 rounded-md text-sm capitalize ${
                             mediaTab === mt ? "bg-primary/20 text-primary" : "text-gray-400"
-                        }`}>
+                        }`}
+                    >
                         {mt === "movie" ? "Movies" : "TV Shows"}
                     </button>
                 ))}

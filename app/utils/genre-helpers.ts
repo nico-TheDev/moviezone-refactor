@@ -34,7 +34,7 @@ export function buildGenreBrowseUrl(
         throw new Error("At least one genre is required");
     }
 
-    const primaryId = genreIds[0]!;
+    const primaryId = genreIds[0];
     const primaryName = genreNames.get(primaryId) ?? "genre";
     const path = genreBrowsePath(mediaType, primaryId, primaryName);
 
@@ -74,7 +74,7 @@ export function formatGenreSelectionLabel(
     genreNames: Map<number, string>,
 ): string {
     if (genreIds.length === 0) return "Genres";
-    const firstName = genreNames.get(genreIds[0]!) ?? "Genre";
+    const firstName = genreNames.get(genreIds[0]) ?? "Genre";
     if (genreIds.length === 1) return firstName;
     return `${firstName} +${genreIds.length - 1}`;
 }
@@ -84,8 +84,6 @@ export function formatGenreTitle(
     genreNames: Map<number, string>,
     fallback: string,
 ): string {
-    const names = genreIds
-        .map((id) => genreNames.get(id))
-        .filter((name): name is string => !!name);
+    const names = genreIds.map((id) => genreNames.get(id)).filter((name): name is string => !!name);
     return names.length > 0 ? names.join(", ") : fallback;
 }

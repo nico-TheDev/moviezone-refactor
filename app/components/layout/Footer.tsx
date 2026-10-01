@@ -1,4 +1,3 @@
-
 export function Footer() {
     const year = new Date().getFullYear();
 
@@ -12,19 +11,18 @@ export function Footer() {
                             href="https://github.com/nico-TheDev"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:text-primary-hover">
+                            className="text-primary hover:text-primary-hover"
+                        >
                             Norberto Ignacio
                         </a>
                     </p>
                     <div className="flex items-center gap-4 text-xs">
                         <a
-                            href="#"
-                            className="text-gray-400 hover:text-primary transition-colors">
-                            Twitter
-                        </a>
-                        <a
-                            href="#"
-                            className="text-gray-400 hover:text-primary transition-colors">
+                            href="https://github.com/nico-TheDev"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-400 hover:text-primary transition-colors"
+                        >
                             GitHub
                         </a>
                     </div>
@@ -36,7 +34,8 @@ export function Footer() {
                             href="https://www.themoviedb.org/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:text-primary-hover">
+                            className="text-primary hover:text-primary-hover"
+                        >
                             The Movie Database (TMDB)
                         </a>
                     </p>

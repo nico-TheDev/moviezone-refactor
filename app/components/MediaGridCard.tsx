@@ -7,28 +7,20 @@ type GridMedia = (MovieResult | TvResult) & {
     poster_path?: string | null;
     vote_average?: number;
 };
-import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
+
 import { StarIcon } from "lucide-react";
 import { useNavigate } from "react-router";
+import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
 
-export function MediaGridCard({
-    media,
-    mediaType,
-}: {
-    media: GridMedia;
-    mediaType: MediaType;
-}) {
+export function MediaGridCard({ media, mediaType }: { media: GridMedia; mediaType: MediaType }) {
     const navigate = useNavigate();
 
     return (
-        <div
-            className="group cursor-pointer"
+        <button
+            type="button"
+            className="group cursor-pointer text-left"
             onClick={() => navigate(`/media/${mediaType}/${media.id}`)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") navigate(`/media/${mediaType}/${media.id}`);
-            }}>
+        >
             <div className="overflow-hidden rounded-md mb-2 aspect-[2/3] bg-gray-900">
                 {media.poster_path ? (
                     <img
@@ -53,6 +45,6 @@ export function MediaGridCard({
                     {media.vote_average?.toFixed(1) ?? "—"}
                 </span>
             </div>
-        </div>
+        </button>
     );
 }

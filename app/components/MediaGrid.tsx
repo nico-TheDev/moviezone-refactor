@@ -1,11 +1,11 @@
-import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import { MOTION_DURATION, MOTION_EASE_OUT, STAGGER_CAP, STAGGER_DELAY } from "@/lib/motion";
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { MOTION_DURATION, MOTION_EASE_OUT, STAGGER_CAP, STAGGER_DELAY } from "@/lib/motion";
+import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { MediaGridCard } from "./MediaGridCard";
-import { Skeleton } from "./ui/Skeleton";
 import { ErrorState } from "./ui/ErrorState";
+import { Skeleton } from "./ui/Skeleton";
 
 function AnimatedGridCard({ children, index }: { children: ReactNode; index: number }) {
     const reduce = useReducedMotion();
@@ -21,7 +21,8 @@ function AnimatedGridCard({ children, index }: { children: ReactNode; index: num
                 duration: MOTION_DURATION,
                 ease: MOTION_EASE_OUT,
                 delay: Math.min(index, STAGGER_CAP) * STAGGER_DELAY,
-            }}>
+            }}
+        >
             {children}
         </motion.div>
     );
@@ -59,8 +60,8 @@ export function MediaGrid({
     if (isLoading) {
         return (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i}>
+                {Array.from({ length: 12 }, (_, i) => `card-${i}`).map((cardKey) => (
+                    <div key={cardKey}>
                         <Skeleton className="aspect-[2/3] w-full rounded-md mb-2" />
                         <Skeleton className="h-4 w-3/4 mb-1" />
                         <Skeleton className="h-3 w-1/2" />

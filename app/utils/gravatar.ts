@@ -25,13 +25,11 @@ function md5(input: string): string {
     let b = 0xefcdab89;
     let c = 0x98badcfe;
     let d = 0x10325476;
-    const k = Array.from({ length: 64 }, (_, i) =>
-        Math.floor(Math.abs(Math.sin(i + 1)) * 2 ** 32),
-    );
+    const k = Array.from({ length: 64 }, (_, i) => Math.floor(Math.abs(Math.sin(i + 1)) * 2 ** 32));
     const s = [
-        7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 5, 9, 14, 20, 5, 9, 14, 20,
-        5, 9, 14, 20, 5, 9, 14, 20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6,
-        10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
+        7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 5, 9, 14, 20, 5, 9, 14, 20, 5,
+        9, 14, 20, 5, 9, 14, 20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6, 10,
+        15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
     ];
     for (let i = 0; i < words.length; i += 16) {
         const aa = a;
@@ -58,7 +56,7 @@ function md5(input: string): string {
             d = c;
             c = b;
             const sum = (a + f + k[j] + (words[i + g] ?? 0)) >>> 0;
-            b = (b + rotateLeft(sum, s[j]!)) >>> 0;
+            b = (b + rotateLeft(sum, s[j])) >>> 0;
             a = temp;
         }
         a = (a + aa) >>> 0;
