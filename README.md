@@ -204,6 +204,13 @@ docker run -p 3001:3001 \
 | `npm run test:e2e` | Playwright smoke tests |
 | `npm run analyze` | Bundle size report (`dist/stats.html`) |
 | `npm run generate:icons` | Regenerate PWA icons from source |
+| `npm run check` | Biome lint, format and import order check (warnings fail) |
+| `npm run check:fix` | The same check, applying every safe fix |
+| `npm run format` | Biome formatting only, writing changes |
+
+### Commit hook
+
+`npm install` points git at the `.githooks/` directory. `pre-commit` runs Biome over the staged files, fixes what it can, re-stages the result, and blocks the commit on a finding it cannot fix. Use `git commit --no-verify` to skip it once.
 
 ## Testing
 

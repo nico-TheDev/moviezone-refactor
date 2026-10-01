@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+BIOME="./node_modules/.bin/biome"
+if [ ! -x "$BIOME" ]; then
+    echo "Commit hook: Biome is not installed. Run npm install first." >&2
+    exit 1
+fi
+
+"$BIOME" check --write --staged --error-on-warnings --no-errors-on-unmatched
+git add -u
