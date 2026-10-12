@@ -12,6 +12,7 @@
         "test:e2e": "playwright test",
         "analyze": "vite build --mode analyze",
         "generate:icons": "node scripts/generate-icons.mjs",
+        "generate:logo": "node scripts/generate-logo-variants.mjs",
         "typecheck": "react-router typegen && tsc",
         "check": "biome check --error-on-warnings",
         "check:fix": "biome check --write",

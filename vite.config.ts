@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
                         name: "MovieZone",
                         short_name: "MovieZone",
                         description: "Browse movies and TV shows",
-                        theme_color: "#e50914",
+                        theme_color: "#e43f5a",
                         background_color: "#000000",
                         display: "standalone",
                         start_url: "/",
