@@ -47,7 +47,7 @@ export default function VideoBackground({ backdropPath, youtubeId, children }: I
     };
 
     return (
-        <section className="relative h-svh w-full overflow-hidden bg-black">
+        <section className="relative h-svh w-full overflow-hidden bg-scrim">
             {backdropPath && (
                 <img
                     src={`${API.IMAGE_BACKDROP_URL}${backdropPath}`}
@@ -68,7 +68,7 @@ export default function VideoBackground({ backdropPath, youtubeId, children }: I
                 />
             )}
 
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-black pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-scrim pointer-events-none" />
 
             {activated && youtubeId && (
                 <button
@@ -76,7 +76,7 @@ export default function VideoBackground({ backdropPath, youtubeId, children }: I
                     onClick={toggleMute}
                     aria-label={muted ? "Unmute trailer" : "Mute trailer"}
                     aria-pressed={!muted}
-                    className="absolute bottom-4 right-4 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur transition-colors cursor-pointer border border-white/70"
+                    className="absolute bottom-4 right-4 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-scrim/45 hover:bg-scrim/70 text-white backdrop-blur-sm transition-colors cursor-pointer border border-white/60"
                 >
                     {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>

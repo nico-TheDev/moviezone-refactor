@@ -2,7 +2,7 @@ import { Skeleton } from "./ui/Skeleton";
 
 export function MediaDetailsSkeleton() {
     return (
-        <div className="bg-black text-white min-h-screen">
+        <div className="bg-canvas text-ink min-h-screen">
             <Skeleton className="h-[70vh] w-full rounded-none" />
             <div className="max-w-[85%] mx-auto py-12 space-y-12">
                 <div>

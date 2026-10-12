@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "motion/react";
 import { useState } from "react";
 import { HeroFeaturedCarousel } from "@/components/HeroFeaturedCarousel";
 import { HeroFeaturedSkeleton } from "@/components/HeroFeaturedSkeleton";
 import { MediaCarousel } from "@/components/MediaCarousel";
+import { Reveal } from "@/components/ui/Reveal";
 import { SectionError } from "@/components/ui/SectionError";
 import { mediaQueries } from "@/queries/media.queries";
 import type { MediaType } from "@/types/tmdb";
 import type { Route } from "./+types/home";
+
+/**
+ * The first viewport of this route is a full-bleed backdrop, so the nav floats
+ * light-on-dark here instead of taking the canvas text colour.
+ */
+export const handle = { navTone: "onImage" };
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -141,7 +147,7 @@ export default function Home() {
                 {trendingMovies.isPending ? (
                     <HeroFeaturedSkeleton />
                 ) : trendingMovies.isError ? (
-                    <div className="max-w-[90%] mx-auto h-full flex items-center justify-center">
+                    <div className="max-w-[85%] mx-auto h-full flex items-center justify-center">
                         <SectionError
                             message="Failed to load featured shows."
                             error={trendingMovies.error}
@@ -159,17 +165,10 @@ export default function Home() {
                     { key: "featured", content: <FeatureMedia /> },
                     { key: "toprated", content: <TopRatedMedia /> },
                     { key: "popular", content: <PopularMedia /> },
-                ].map(({ key, content }, index) => (
-                    <motion.section
-                        key={key}
-                        className="my-16"
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-80px" }}
-                        transition={{ duration: 0.4, delay: index * 0.05 }}
-                    >
+                ].map(({ key, content }) => (
+                    <Reveal key={key} as="section" when="inView" className="my-16">
                         {content}
-                    </motion.section>
+                    </Reveal>
                 ))}
             </div>
         </>

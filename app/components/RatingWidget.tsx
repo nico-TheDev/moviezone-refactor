@@ -55,13 +55,14 @@ export function RatingWidget({
                         onMouseEnter={() => setHover(value)}
                         onMouseLeave={() => setHover(0)}
                         onClick={() => handleRate(value * 2)}
-                        className="p-0.5"
+                        aria-label={`Rate ${value * 2} out of 10`}
+                        className="cursor-pointer p-1 transition-transform duration-150 hover:scale-110 active:scale-95"
                     >
                         <StarIcon
                             size={22}
                             className={cn(
-                                "transition-colors",
-                                filled ? "text-primary" : "text-gray-500",
+                                "transition-colors duration-150",
+                                filled ? "text-primary" : "text-white/50",
                             )}
                             fill={filled ? "currentColor" : "none"}
                         />
@@ -69,7 +70,9 @@ export function RatingWidget({
                 );
             })}
             {rating > 0 && (
-                <span className="text-xs text-gray-400 ml-2">Your rating: {rating}/10</span>
+                <span className="ml-2 text-xs text-white/80 tabular-nums">
+                    Your rating: {rating}/10
+                </span>
             )}
         </div>
     );

@@ -1,7 +1,7 @@
-import { motion } from "motion/react";
 import { useState } from "react";
 import { Navigate } from "react-router";
 import { createGuestSession, createRequestToken, getTmdbAuthRedirectUrl } from "@/api/auth.api";
+import { Reveal } from "@/components/ui/Reveal";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/stores/auth";
 import type { Route } from "./+types/login";
@@ -46,13 +46,9 @@ export default function LoginPage() {
 
     return (
         <main className="min-h-[80vh] flex items-center justify-center px-4">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-md w-full bg-gray-900 border border-white/10 rounded-xl p-8 text-white"
-            >
-                <h1 className="text-3xl font-bold mb-2">Welcome to MovieZone</h1>
-                <p className="text-gray-400 text-sm mb-8">
+            <Reveal className="max-w-md w-full bg-surface border border-line rounded-xl p-8 text-ink">
+                <h1 className="text-3xl font-bold text-balance mb-2">Welcome to MovieZone</h1>
+                <p className="text-ink-muted text-sm mb-8">
                     Sign in with TMDB to manage favorites and watchlists, or browse as a guest to
                     rate content.
                 </p>
@@ -61,7 +57,7 @@ export default function LoginPage() {
                         type="button"
                         onClick={handleOAuth}
                         disabled={loading !== null}
-                        className="w-full py-3 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors disabled:opacity-50"
+                        className="w-full cursor-pointer py-3 bg-primary-strong text-on-primary hover:bg-primary-hover rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {loading === "oauth" ? "Redirecting..." : "Login with TMDB"}
                     </button>
@@ -69,12 +65,12 @@ export default function LoginPage() {
                         type="button"
                         onClick={handleGuest}
                         disabled={loading !== null}
-                        className="w-full py-3 border border-white/20 hover:border-primary rounded-full font-medium transition-colors disabled:opacity-50"
+                        className="w-full cursor-pointer py-3 border border-line-strong hover:border-primary hover:text-primary-text rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {loading === "guest" ? "Loading..." : "Browse as Guest"}
                     </button>
                 </div>
-            </motion.div>
+            </Reveal>
         </main>
     );
 }

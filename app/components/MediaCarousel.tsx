@@ -1,15 +1,22 @@
 import type { EmblaCarouselType, EmblaOptionsType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, StarIcon } from "lucide-react";
-import type React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { API } from "@/constants/api";
 import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { cn } from "@/utils/css-helpers";
 import { getReleaseYear, getTitle } from "@/utils/media-string-helpers";
+import { MediaCaption, MediaThumb } from "./MediaCard";
 import { MediaCarouselSkeleton } from "./MediaCarouselSkeleton";
 import { SectionError } from "./ui/SectionError";
+import { SectionHeading } from "./ui/SectionHeading";
+import { SegmentedControl } from "./ui/SegmentedControl";
+
+const MEDIA_TYPE_OPTIONS = [
+    { value: "movie", label: "Movies" },
+    { value: "tv", label: "TV Shows" },
+] as const;
 
 type UsePrevNextButtonsType = {
     prevBtnDisabled: boolean;
@@ -54,41 +61,10 @@ export const usePrevNextButtons = (
     };
 };
 
-export const PrevButton = ({
-    children,
-    className,
-    ...restProps
-}: React.ComponentPropsWithRef<"button">) => {
-    return (
-        <button
-            type="button"
-            className={`disabled:opacity-50 disabled:cursor-not-allowed ${className ?? ""}`}
-            {...restProps}
-        >
-            <ChevronLeft size={40} />
-            {children}
-        </button>
-    );
-};
+const arrowClassName =
+    "absolute top-0 z-10 flex w-10 cursor-pointer items-center justify-center bg-scrim/55 text-white transition-[opacity,background-color] duration-300 hover:bg-scrim/75 disabled:cursor-not-allowed disabled:opacity-40 md:opacity-0 md:group-hover/carousel:opacity-100 md:focus-visible:opacity-100";
 
-export const NextButton = ({
-    children,
-    className,
-    ...restProps
-}: React.ComponentPropsWithRef<"button">) => {
-    return (
-        <button
-            type="button"
-            className={`disabled:opacity-50 disabled:cursor-not-allowed ${className ?? ""}`}
-            {...restProps}
-        >
-            <ChevronRight size={40} />
-            {children}
-        </button>
-    );
-};
-
-function MediaCard({
+function CarouselCard({
     media,
     mediaType,
     orientation,
@@ -102,65 +78,52 @@ function MediaCard({
     mediaType: MediaType;
 }) {
     const navigate = useNavigate();
+    const title = getTitle(media);
+    const imagePath = orientation === "landscape" ? media.backdrop_path : media.poster_path;
+    const imageBase = orientation === "landscape" ? API.IMAGE_BACKDROP_URL : API.IMAGE_POSTER_URL;
 
     return (
         <button
             type="button"
             className={cn(
-                "min-w-0 group/card-img cursor-pointer pr-4 text-left",
+                "group/card min-w-0 cursor-pointer pr-4 text-left",
                 orientation === "landscape"
                     ? "flex-[0_0_200px] md:flex-[0_0_300px]"
                     : "flex-[0_0_160px] md:flex-[0_0_250px]",
             )}
-            onClick={() => navigate(`/media/${mediaType}/${media.id}`)}
+            onClick={() => navigate(`/media/${mediaType}/${media.id}`, { viewTransition: true })}
         >
-            <div
-                className={cn(
-                    "overflow-hidden mb-2 rounded-md cursor-pointer relative",
-                    orientation === "landscape" ? "h-40" : "h-100",
-                )}
-            >
-                <img
-                    src={
-                        orientation === "landscape"
-                            ? `${API.IMAGE_BACKDROP_URL}${media.backdrop_path}`
-                            : `${API.IMAGE_POSTER_URL}${media.poster_path}`
-                    }
-                    alt={getTitle(media) ?? ""}
-                    loading="lazy"
-                    className="block w-full h-full object-cover group-hover/card-img:scale-110 transition-transform duration-300"
+            <div className="relative">
+                <MediaThumb
+                    src={imagePath ? `${imageBase}${imagePath}` : null}
+                    alt={title ?? ""}
+                    fallback={title ?? "No image"}
+                    className={cardHeight[orientation]}
                 />
                 {topLabelEnabled && (
-                    <div className="absolute top-0 left-0 bg-primary text-white p-2">
+                    <div className="absolute top-0 left-0 bg-primary-strong text-on-primary p-2">
                         <p className="text-xs text-center uppercase">
                             Top
-                            <span className="block text-sm font-medium">{index + 1}</span>
+                            <span className="block text-sm font-medium tabular-nums">
+                                {index + 1}
+                            </span>
                         </p>
 
-                        <span className="inline-block w-0 h-0 border-t-10 border-t-primary border-r-20 border-r-transparent absolute top-full left-0"></span>
-                        <span className="inline-block w-0 h-0 border-t-10 border-t-primary border-l-20 border-l-transparent absolute top-full right-0"></span>
+                        {/* Zero-size triangle notches under the rank pennant: the
+                            coloured edge is border-t, the wide edges are transparent. */}
+                        {/* impeccable-disable-next-line side-tab: transparent borders, not a card accent */}
+                        <span className="inline-block w-0 h-0 border-t-10 border-t-primary-strong border-r-20 border-r-transparent absolute top-full left-0"></span>
+                        {/* impeccable-disable-next-line side-tab: transparent borders, not a card accent */}
+                        <span className="inline-block w-0 h-0 border-t-10 border-t-primary-strong border-l-20 border-l-transparent absolute top-full right-0"></span>
                     </div>
                 )}
             </div>
-            <div className="text-white">
-                <p className="text-sm group-hover/card-img:text-primary mb-2">{getTitle(media)}</p>
-
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">{getReleaseYear(media)}</span>
-
-                    <span className="inline-flex items-center gap-1 text-xs">
-                        <StarIcon
-                            fill="currentColor"
-                            size={16}
-                            className="inline-block text-primary"
-                        />
-                        {media.vote_average.toFixed(2)}
-                    </span>
-                </div>
-            </div>
+            <MediaCaption title={title} year={getReleaseYear(media)} rating={media.vote_average} />
         </button>
     );
 }
+
+const cardHeight = { landscape: "h-40", portrait: "h-100" } as const;
 
 interface IProps {
     mediaData: MovieResult[] | TvResult[];
@@ -203,10 +166,7 @@ export function MediaCarousel({
     if (isError) {
         return (
             <div className="w-full mx-auto">
-                <div className="flex items-center gap-2 mb-4">
-                    <span className="w-1 bg-primary block h-8" />
-                    <h2 className="text-2xl font-bold text-white">{title}</h2>
-                </div>
+                <SectionHeading className="mb-4">{title}</SectionHeading>
                 <SectionError error={error} onRetry={onRetry} />
             </div>
         );
@@ -214,45 +174,23 @@ export function MediaCarousel({
 
     return (
         <div className="w-full mx-auto group/carousel">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold  text-white flex items-center gap-2">
-                    <span className="w-1 bg-primary block h-8" />
-                    {title}
-                </h2>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <SectionHeading>{title}</SectionHeading>
 
-                <div
-                    className={cn(
-                        " items-center border rounded-md border-primary",
-                        showMediaTypeSelector ? "flex" : "hidden",
-                    )}
-                >
-                    <button
-                        type="button"
-                        className={cn(
-                            "font-medium px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer border-r border-primary",
-                            mediaType === "movie" && "bg-primary text-white",
-                        )}
-                        onClick={() => setMediaType("movie")}
-                    >
-                        Movies
-                    </button>
-                    <button
-                        type="button"
-                        className={cn(
-                            "px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer",
-                            mediaType === "tv" && "bg-primary text-white",
-                        )}
-                        onClick={() => setMediaType("tv")}
-                    >
-                        Series
-                    </button>
-                </div>
+                {showMediaTypeSelector && (
+                    <SegmentedControl
+                        label={`${title}: show movies or TV shows`}
+                        options={MEDIA_TYPE_OPTIONS}
+                        value={mediaType}
+                        onChange={setMediaType}
+                    />
+                )}
             </div>
             <div className="relative">
                 <div className="overflow-hidden" ref={emblaRef}>
                     <div className="flex touch-pan-y touch-pinch-zoom">
                         {mediaData.map((media, index) => (
-                            <MediaCard
+                            <CarouselCard
                                 key={media.id}
                                 media={media}
                                 orientation={orientation}
@@ -264,22 +202,24 @@ export function MediaCarousel({
                     </div>
                 </div>
 
-                <PrevButton
+                <button
+                    type="button"
                     onClick={onPrevButtonClick}
                     disabled={prevBtnDisabled}
-                    className={cn(
-                        "opacity-100 md:opacity-0 absolute top-0 left-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer w-10 md:group-hover/carousel:opacity-100 transition-opacity duration-300",
-                        orientation === "landscape" ? "h-40" : "h-100",
-                    )}
-                />
-                <NextButton
+                    aria-label={`Scroll ${title} back`}
+                    className={cn(arrowClassName, "left-0 rounded-l-md", cardHeight[orientation])}
+                >
+                    <ChevronLeft size={32} />
+                </button>
+                <button
+                    type="button"
                     onClick={onNextButtonClick}
                     disabled={nextBtnDisabled}
-                    className={cn(
-                        "opacity-100 md:opacity-0 absolute top-0 right-0 bg-gray-900/50 hover:bg-gray-900/80 cursor-pointer w-10 md:group-hover/carousel:opacity-100 transition-opacity duration-300",
-                        orientation === "landscape" ? "h-40" : "h-100",
-                    )}
-                />
+                    aria-label={`Scroll ${title} forward`}
+                    className={cn(arrowClassName, "right-4 rounded-r-md", cardHeight[orientation])}
+                >
+                    <ChevronRight size={32} />
+                </button>
             </div>
         </div>
     );

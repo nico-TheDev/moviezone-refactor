@@ -1,32 +1,13 @@
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import { useMemo } from "react";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import { MOTION_DURATION, MOTION_EASE_OUT, STAGGER_CAP, STAGGER_DELAY } from "@/lib/motion";
 import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { MediaGridCard } from "./MediaGridCard";
 import { ErrorState } from "./ui/ErrorState";
+import { Reveal } from "./ui/Reveal";
 import { Skeleton } from "./ui/Skeleton";
 
-function AnimatedGridCard({ children, index }: { children: ReactNode; index: number }) {
-    const reduce = useReducedMotion();
-
-    if (reduce) return children;
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{
-                duration: MOTION_DURATION,
-                ease: MOTION_EASE_OUT,
-                delay: Math.min(index, STAGGER_CAP) * STAGGER_DELAY,
-            }}
-        >
-            {children}
-        </motion.div>
-    );
-}
+const gridClassName =
+    "grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6";
 
 type Props = {
     items: Array<{ media: MovieResult | TvResult; mediaType: MediaType }>;
@@ -51,6 +32,18 @@ export function MediaGrid({
     fetchNextPage,
     emptyMessage = "No results found.",
 }: Props) {
+    // TMDB pages overlap when rankings shift between requests, so the same
+    // title can arrive twice. Keep the first: keys stay unique, rows stay stable.
+    const uniqueItems = useMemo(() => {
+        const seen = new Set<string>();
+        return items.filter(({ media, mediaType }) => {
+            const key = `${mediaType}-${media.id}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }, [items]);
+
     const sentinelRef = useInfiniteScroll(
         () => fetchNextPage?.(),
         hasNextPage,
@@ -59,12 +52,12 @@ export function MediaGrid({
 
     if (isLoading) {
         return (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className={gridClassName} aria-busy="true">
                 {Array.from({ length: 12 }, (_, i) => `card-${i}`).map((cardKey) => (
                     <div key={cardKey}>
-                        <Skeleton className="aspect-[2/3] w-full rounded-md mb-2" />
-                        <Skeleton className="h-4 w-3/4 mb-1" />
-                        <Skeleton className="h-3 w-1/2" />
+                        <Skeleton className="aspect-[2/3] w-full" />
+                        <Skeleton className="h-4 w-3/4 mt-2" />
+                        <Skeleton className="h-3 w-1/2 mt-1.5" />
                     </div>
                 ))}
             </div>
@@ -75,27 +68,28 @@ export function MediaGrid({
         return <ErrorState layout="section" error={error} onRetry={onRetry} />;
     }
 
-    if (items.length === 0) {
+    if (uniqueItems.length === 0) {
         return (
-            <div className="text-center py-16 text-gray-400">
+            <Reveal className="text-center py-16 text-ink-muted">
                 <p>{emptyMessage}</p>
-            </div>
+            </Reveal>
         );
     }
 
     return (
         <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {items.map(({ media, mediaType }, index) => (
-                    <AnimatedGridCard key={`${mediaType}-${media.id}`} index={index}>
+            <div className={gridClassName}>
+                {uniqueItems.map(({ media, mediaType }, index) => (
+                    <Reveal key={`${mediaType}-${media.id}`} when="inView" index={index % 12}>
                         <MediaGridCard media={media} mediaType={mediaType} />
-                    </AnimatedGridCard>
+                    </Reveal>
                 ))}
             </div>
             {hasNextPage && <div ref={sentinelRef} className="h-10 mt-4" />}
             {isFetchingNextPage && (
-                <div className="flex justify-center py-4">
+                <div className="flex justify-center py-6" role="status">
                     <div className="size-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="sr-only">Loading more titles</span>
                 </div>
             )}
         </>

@@ -2,10 +2,10 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export function HeroFeaturedSkeleton() {
     return (
-        <div className="flex-[0_0_100%] min-w-0 h-svh relative">
+        <div className="flex-[0_0_100%] min-w-0 h-full relative" aria-busy="true">
             <Skeleton className="absolute z-0 w-full h-full rounded-none" />
 
-            <div className="relative flex max-w-7xl w-full mx-auto h-full z-10 flex-col justify-center pt-50">
+            <div className="relative flex max-w-[85%] w-full mx-auto h-full z-10 flex-col justify-center pt-50">
                 <div className="p-4">
                     <Skeleton className="h-10 w-2/3 max-w-2xl mb-4" />
 
@@ -22,7 +22,7 @@ export function HeroFeaturedSkeleton() {
                         <Skeleton className="h-3 w-3/4" />
                     </div>
 
-                    <Skeleton className="h-10 w-36 rounded-full" />
+                    <Skeleton className="h-11 w-36 rounded-full" />
                 </div>
             </div>
         </div>

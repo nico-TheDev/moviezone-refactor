@@ -17,12 +17,12 @@ export function TrailerModal({
     return (
         <Modal open={open} onClose={onClose} title="Trailers">
             {youtubeVideos.length === 0 ? (
-                <p className="text-gray-400 text-sm">No trailers available.</p>
+                <p className="text-ink-muted text-sm">No trailers available.</p>
             ) : (
                 <div className="space-y-6">
                     {youtubeVideos.map((video) => (
                         <div key={video.id}>
-                            <p className="text-sm text-gray-300 mb-2">{video.name}</p>
+                            <p className="text-sm text-ink-muted mb-2">{video.name}</p>
                             <div className="aspect-video w-full rounded-md overflow-hidden">
                                 <iframe
                                     src={`${YT_EMBED_ORIGIN}/embed/${video.key}`}

@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { Reveal } from "@/components/ui/Reveal";
 import type { Route } from "./+types/error-page";
 
 export function meta({ params }: Route.MetaArgs) {
@@ -12,13 +12,9 @@ export default function ErrorPage({ params }: Route.ComponentProps) {
 
     return (
         <main className="min-h-[70vh] flex items-center justify-center px-4">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-md"
-            >
+            <Reveal className="w-full max-w-md">
                 <ErrorState title="Oops!" message={message} />
-            </motion.div>
+            </Reveal>
         </main>
     );
 }

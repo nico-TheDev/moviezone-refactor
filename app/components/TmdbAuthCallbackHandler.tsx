@@ -6,7 +6,7 @@ export function TmdbAuthCallbackHandler() {
     if (!isOAuthCallback) return null;
 
     return (
-        <main className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 text-white">
+        <main className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/85 text-ink">
             <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </main>
     );

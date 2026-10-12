@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import {
@@ -13,17 +12,28 @@ import {
     getWatchlistTv,
 } from "@/api/account.api";
 import { deleteSession } from "@/api/auth.api";
-import { MediaGridCard } from "@/components/MediaGridCard";
+import { MediaGrid } from "@/components/MediaGrid";
 import { UserAvatar } from "@/components/UserAvatar";
-import { ErrorState } from "@/components/ui/ErrorState";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { Reveal } from "@/components/ui/Reveal";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { useAuthStore } from "@/stores/auth";
-import type { MediaType } from "@/types/tmdb";
+import type { MediaType, MovieResult, TvResult } from "@/types/tmdb";
 import { cn } from "@/utils/css-helpers";
 import type { Route } from "./+types/profile";
 
 type Tab = "favorites" | "rated" | "watchlist";
 type MediaTab = "movie" | "tv";
+
+const TAB_LABELS: Record<Tab, string> = {
+    favorites: "Favorites",
+    rated: "Rated",
+    watchlist: "Watchlist",
+};
+
+const MEDIA_TAB_OPTIONS = [
+    { value: "movie", label: "Movies" },
+    { value: "tv", label: "TV Shows" },
+] as const;
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: "Profile | MovieZone" }];
@@ -100,19 +110,11 @@ export default function ProfilePage() {
         () =>
             data?.pages.flatMap((page) =>
                 page.results.map((item) => ({
-                    media: item,
+                    media: item as MovieResult | TvResult,
                     mediaType: mediaTab as MediaType,
                 })),
             ) ?? [],
         [data, mediaTab],
-    );
-
-    // Moving the hooks above it changes when they run. Tracked as its own bug fix, not a style question.
-    // biome-ignore lint/correctness/useHookAtTopLevel: called below a `mode === "none"` early return.
-    const sentinelRef = useInfiniteScroll(
-        () => fetchNextPage(),
-        !!hasNextPage,
-        !!isFetchingNextPage,
     );
 
     const handleLogout = async () => {
@@ -122,83 +124,57 @@ export default function ProfilePage() {
     };
 
     return (
-        <main className="max-w-[85%] mx-auto py-24 text-white">
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col sm:flex-row items-center gap-6 mb-10"
-            >
+        <main className="max-w-[85%] mx-auto py-24 text-ink">
+            <Reveal className="flex flex-col sm:flex-row items-center gap-6 mb-10">
                 <UserAvatar
                     size={120}
                     className={cn("size-24", !isGuest && "border-2 border-primary rounded-full")}
                 />
                 <div className="text-center sm:text-left">
-                    <h1 className="text-2xl font-bold">
+                    <h1 className="text-3xl font-bold text-balance">
                         {isGuest ? "Guest User" : account?.name || account?.username}
                     </h1>
                     {!isGuest && account?.username && (
-                        <p className="text-gray-400 text-sm">@{account.username}</p>
+                        <p className="text-ink-muted text-sm">@{account.username}</p>
                     )}
                 </div>
                 <button
                     type="button"
                     onClick={handleLogout}
-                    className="sm:ml-auto px-4 py-2 border border-white/20 rounded-full text-sm hover:border-primary transition-colors"
+                    className="sm:ml-auto cursor-pointer rounded-full border border-line-strong px-5 py-2.5 text-sm font-medium transition-colors hover:border-primary hover:text-primary-text"
                 >
                     Logout
                 </button>
-            </motion.div>
+            </Reveal>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-                {availableTabs.map((t) => (
-                    <button
-                        key={t}
-                        type="button"
-                        onClick={() => setTab(t)}
-                        className={`px-4 py-2 rounded-full text-sm capitalize ${
-                            tab === t ? "bg-primary text-white" : "border border-white/20"
-                        }`}
-                    >
-                        {t}
-                    </button>
-                ))}
-            </div>
+            <Reveal className="flex flex-wrap items-center gap-3 mb-8" delay={0.06}>
+                {availableTabs.length > 1 && (
+                    <SegmentedControl
+                        label="List"
+                        options={availableTabs.map((t) => ({ value: t, label: TAB_LABELS[t] }))}
+                        value={tab}
+                        onChange={setTab}
+                    />
+                )}
+                <SegmentedControl
+                    label="Media type"
+                    options={MEDIA_TAB_OPTIONS}
+                    value={mediaTab}
+                    onChange={setMediaTab}
+                />
+            </Reveal>
 
-            <div className="flex gap-2 mb-8">
-                {(["movie", "tv"] as const).map((mt) => (
-                    <button
-                        key={mt}
-                        type="button"
-                        onClick={() => setMediaTab(mt)}
-                        className={`px-4 py-2 rounded-md text-sm capitalize ${
-                            mediaTab === mt ? "bg-primary/20 text-primary" : "text-gray-400"
-                        }`}
-                    >
-                        {mt === "movie" ? "Movies" : "TV Shows"}
-                    </button>
-                ))}
-            </div>
-
-            {isPending ? (
-                <div className="flex justify-center py-12">
-                    <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                </div>
-            ) : isError ? (
-                <ErrorState layout="section" error={error} onRetry={() => refetch()} />
-            ) : items.length === 0 ? (
-                <p className="text-gray-400 text-center py-12">No items in this list yet.</p>
-            ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {items.map(({ media, mediaType }) => (
-                        <MediaGridCard
-                            key={`${mediaType}-${media.id}`}
-                            media={media as Parameters<typeof MediaGridCard>[0]["media"]}
-                            mediaType={mediaType}
-                        />
-                    ))}
-                </div>
-            )}
-            {hasNextPage && <div ref={sentinelRef} className="h-10" />}
+            <MediaGrid
+                items={items}
+                isLoading={isPending}
+                isError={isError}
+                error={error}
+                onRetry={() => refetch()}
+                isFetchingNextPage={isFetchingNextPage}
+                hasNextPage={!!hasNextPage}
+                fetchNextPage={() => fetchNextPage()}
+                emptyMessage={`No ${mediaTab === "movie" ? "movies" : "TV shows"} in your ${TAB_LABELS[tab].toLowerCase()} list yet.`}
+            />
         </main>
     );
 }
