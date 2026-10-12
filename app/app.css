@@ -1,30 +1,200 @@
 @import "tailwindcss";
 
+/*
+ * MovieZone colour system
+ *
+ * Two layers, so a theme change remaps roles instead of rewriting utilities:
+ *
+ *   1. primitives  --mz-*        declared per scheme on :root, overridden inside
+ *                                the dark media query. The only place a raw
+ *                                colour value lives.
+ *   2. semantic    @theme inline --color-canvas, --color-ink, ... map a role to a
+ *                                primitive. `inline` keeps the var() reference in
+ *                                the generated utility, which is what lets one
+ *                                utility resolve differently per scheme.
+ *
+ * Roles: canvas (page), surface (raised panel), surface-muted (inset fill),
+ * line / line-strong (separator / control boundary), ink / ink-muted /
+ * ink-subtle (primary / secondary / tertiary text), skeleton (loading fill),
+ * and the action set: primary (brand accent), primary-strong (the fill that
+ * carries white text), primary-hover, primary-text (brand as small text),
+ * on-primary, focus.
+ *
+ * Neutrals carry a trace of the brand hue (20deg, chroma <= 0.02) so both
+ * schemes read as one product instead of a warm brand on a blue-grey default.
+ * Every text pair is measured, not eyeballed: body text >= 4.5:1, controls,
+ * borders and focus >= 3:1, in both schemes.
+ *
+ * Image contexts (hero backdrops, trailers, poster scrims) are deliberately NOT
+ * themed: they stay light-on-dark, because the backdrop is a photograph in
+ * either scheme. Their dark is `scrim`, not pure black: the same warm 20deg
+ * hue as the neutrals, so a photograph fades into the page instead of into a
+ * colder black that belongs to neither scheme.
+ *
+ * Motion has one voice: `ease-emphasized` for arrivals (the same curve as
+ * MOTION_EASE_OUT in app/lib/motion.ts), and exits faster than entrances.
+ */
+:root {
+    color-scheme: light;
+
+    --mz-canvas: oklch(0.975 0.005 20);
+    --mz-surface: oklch(1 0 0);
+    --mz-surface-muted: oklch(0.958 0.006 20);
+    --mz-line: oklch(0.9 0.008 20);
+    --mz-line-strong: oklch(0.59 0.02 20);
+    --mz-ink: oklch(0.22 0.012 20);
+    --mz-ink-muted: oklch(0.45 0.016 20);
+    --mz-ink-subtle: oklch(0.535 0.014 20);
+    --mz-skeleton: oklch(0.92 0.008 20);
+    --mz-primary-text: #b3283f;
+    --mz-focus: #b3283f;
+    --mz-selection: oklch(0.63 0.2 15 / 0.3);
+    --mz-scrollbar: oklch(0.82 0.008 20);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+
+        --mz-canvas: oklch(0.15 0.01 20);
+        --mz-surface: oklch(0.205 0.012 20);
+        --mz-surface-muted: oklch(0.255 0.012 20);
+        --mz-line: oklch(0.3 0.014 20);
+        --mz-line-strong: oklch(0.62 0.016 20);
+        --mz-ink: oklch(0.97 0.004 20);
+        --mz-ink-muted: oklch(0.79 0.012 20);
+        --mz-ink-subtle: oklch(0.695 0.014 20);
+        --mz-skeleton: oklch(0.3 0.012 20);
+        --mz-primary-text: oklch(0.78 0.14 15);
+        --mz-focus: oklch(0.78 0.14 15);
+        --mz-selection: oklch(0.63 0.2 15 / 0.4);
+        --mz-scrollbar: oklch(0.38 0.012 20);
+    }
+}
+
+@keyframes mz-page-in {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes mz-page-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes mz-hero-progress {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@layer components {
+    /* The hero's autoplay cycle, made visible: the active indicator segment
+       fills over exactly one cycle, so the user can see how long the slide has
+       left. Duration comes from --hero-cycle, set from AUTOPLAY_DELAY in
+       HeroFeaturedCarousel, so the fill and the timer cannot drift apart. */
+    .hero-progress {
+        transform: scaleX(0);
+        transform-origin: left center;
+        animation: mz-hero-progress var(--hero-cycle, 5000ms) linear forwards;
+    }
+
+    .hero-progress[data-state="paused"] {
+        animation-play-state: paused;
+    }
+
+    /* Reduced motion keeps the state legible (the active segment reads as a
+       filled bar) and drops the movement. */
+    @media (prefers-reduced-motion: reduce) {
+        .hero-progress {
+            animation: none;
+            transform: scaleX(1);
+        }
+    }
+}
+
 @theme {
     --font-display:
         "Poppins", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
         "Segoe UI Symbol", "Noto Color Emoji";
+
+    /* Confirmed brand reds. `primary` is the accent (rules, stars, borders,
+       badges); `primary-strong` is the only fill that carries white text. */
     --color-primary: #e43f5a;
-    --color-primary-hover: #c42c46;
+    --color-primary-strong: #c42c46;
+    --color-primary-hover: #a82338;
     --color-tmdb-gradient: linear-gradient(30deg, #0d253f, #01b4e4, #01b4e4);
+
+    /* The dark of every image context: scrims, overlays, the trailer stage. */
+    --color-scrim: oklch(0.13 0.012 20);
+
+    --ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Popovers float over arbitrary content, so their shadow is offset and
+       tinted with the scrim rather than a neutral grey halo. */
+    --shadow-popover: 0 18px 40px -18px oklch(0.13 0.012 20 / 0.45);
+}
+
+@theme inline {
+    --color-canvas: var(--mz-canvas);
+    --color-surface: var(--mz-surface);
+    --color-surface-muted: var(--mz-surface-muted);
+    --color-line: var(--mz-line);
+    --color-line-strong: var(--mz-line-strong);
+    --color-ink: var(--mz-ink);
+    --color-ink-muted: var(--mz-ink-muted);
+    --color-ink-subtle: var(--mz-ink-subtle);
+    --color-skeleton: var(--mz-skeleton);
+    --color-on-primary: #ffffff;
+    --color-primary-text: var(--mz-primary-text);
+    --color-focus: var(--mz-focus);
 }
 
 html,
 body {
-    @apply bg-gray-50 dark:bg-gray-950;
-    color-scheme: light;
-
-    @media (prefers-color-scheme: dark) {
-        color-scheme: dark;
-    }
+    @apply bg-canvas text-ink;
 }
 
 @layer base {
+    /* Browser surfaces belong to the palette too: selection, focus ring and
+       scrollbar ship with defaults that belong to no design system. */
+    ::selection {
+        background-color: var(--mz-selection);
+        color: var(--mz-ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--mz-focus);
+        outline-offset: 2px;
+    }
+
+    html {
+        scrollbar-color: var(--mz-scrollbar) transparent;
+    }
+
+    /* Route changes crossfade instead of cutting: the nav and footer persist,
+       so only the page body visibly changes. Navigations opt in with
+       `viewTransition`; reduced motion keeps the instant cut. */
+    @media (prefers-reduced-motion: no-preference) {
+        ::view-transition-old(root) {
+            animation: mz-page-out 140ms ease-in both;
+        }
+
+        ::view-transition-new(root) {
+            animation: mz-page-in 280ms var(--ease-emphasized) both;
+        }
+    }
+
     a.active {
-        color: var(--color-primary);
+        color: var(--color-primary-text);
     }
 
     a:hover {
-        color: var(--color-primary-hover);
+        color: var(--color-primary-text);
     }
 }

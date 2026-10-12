@@ -33,7 +33,7 @@ export function ErrorState({
         <div
             role="alert"
             className={cn(
-                "flex flex-col items-center justify-center text-center text-white",
+                "flex flex-col items-center justify-center text-center text-ink",
                 isSection ? "py-12 px-4" : "min-h-[50vh] p-6",
                 className,
             )}
@@ -45,7 +45,7 @@ export function ErrorState({
             <h2 className={cn("font-semibold mb-2", isSection ? "text-lg" : "text-2xl")}>
                 {resolvedTitle}
             </h2>
-            <p className={cn("text-gray-300 max-w-md", isSection ? "text-sm mb-4" : "mb-6")}>
+            <p className={cn("text-ink-muted max-w-md", isSection ? "text-sm mb-4" : "mb-6")}>
                 {resolvedMessage}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
@@ -53,7 +53,7 @@ export function ErrorState({
                     <button
                         type="button"
                         onClick={onRetry}
-                        className="px-5 py-2.5 bg-primary hover:bg-primary-hover rounded-full font-medium transition-colors text-sm"
+                        className="cursor-pointer px-5 py-2.5 bg-primary-strong text-on-primary hover:bg-primary-hover rounded-full font-medium transition-colors text-sm"
                     >
                         Try again
                     </button>
@@ -61,7 +61,8 @@ export function ErrorState({
                 {!isSection && homeHref && (
                     <Link
                         to={homeHref}
-                        className="px-5 py-2.5 border border-gray-600 hover:border-gray-400 rounded-full font-medium transition-colors text-sm"
+                        viewTransition
+                        className="px-5 py-2.5 border border-line-strong hover:border-primary hover:text-primary-text rounded-full font-medium transition-colors text-sm"
                     >
                         Return to Home
                     </Link>
