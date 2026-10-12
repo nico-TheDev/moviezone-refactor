@@ -39,7 +39,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     name="viewport"
                     content="width=device-width, initial-scale=1, viewport-fit=cover"
                 />
-                <meta name="theme-color" content="#e50914" />
+                <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf5f5" />
+                <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0a09" />
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
                 <Meta />
@@ -78,11 +79,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     return (
         <QueryErrorResetBoundary>
             {({ reset }) => (
-                <main className="min-h-screen flex items-center justify-center bg-gray-950 text-white p-4">
+                <main className="min-h-screen flex items-center justify-center bg-canvas text-ink p-4">
                     <div className="w-full max-w-md">
                         <ErrorState title={copy.title} message={copy.message} onRetry={reset} />
                         {stack && (
-                            <pre className="mt-8 w-full p-4 overflow-x-auto text-left text-xs text-gray-500 bg-gray-900 rounded-lg">
+                            <pre className="mt-8 w-full p-4 overflow-x-auto text-left text-xs text-ink-subtle bg-surface-muted rounded-lg">
                                 <code>{stack}</code>
                             </pre>
                         )}

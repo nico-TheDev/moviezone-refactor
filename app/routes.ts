@@ -1,5 +1,11 @@
 import { index, layout, type RouteConfig, route } from "@react-router/dev/routes";
 
+/*
+ * Routes whose first viewport is a photograph or a trailer export
+ * `handle = { navTone: "onImage" }` from their own module, so the nav floats
+ * light-on-dark there and on the canvas everywhere else (see `useNavTone` in
+ * components/layout/Nav.tsx).
+ */
 export default [
     layout("components/layout/AppShell.tsx", [
         index("routes/home.tsx"),

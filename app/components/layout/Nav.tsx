@@ -1,11 +1,38 @@
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useMatches } from "react-router";
 import { UserAvatar } from "@/components/UserAvatar";
 import { NAV_MOVIE_LINKS, NAV_TV_LINKS } from "@/constants/lists";
+import { MOTION_DURATION, MOTION_DURATION_FAST, MOTION_EASE_OUT } from "@/lib/motion";
 import { useAuthStore } from "@/stores/auth";
+import { cn } from "@/utils/css-helpers";
 import { SearchBar } from "../SearchBar";
+
+/**
+ * Routes whose first viewport is a photograph or a trailer declare
+ * `handle.navTone = "onImage"` in `app/routes.ts`. The nav floats over imagery
+ * there and over the canvas everywhere else, so its text follows the backdrop,
+ * not the colour scheme.
+ */
+type NavTone = "onImage" | "onCanvas";
+
+function useNavTone(): NavTone {
+    const matches = useMatches();
+    const overImage = matches.some(
+        (match) => (match.handle as { navTone?: NavTone } | undefined)?.navTone === "onImage",
+    );
+    return overImage ? "onImage" : "onCanvas";
+}
+
+const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
+    cn(
+        "block px-4 py-2.5 text-sm transition-colors hover:bg-primary/15 hover:text-primary-text",
+        isActive ? "text-primary-text" : "text-ink",
+    );
+
+const drawerLinkClassName = ({ isActive }: { isActive: boolean }) =>
+    cn("block py-2 transition-colors hover:text-primary-text", isActive && "text-primary-text");
 
 function NavDropdown({
     label,
@@ -26,31 +53,39 @@ function NavDropdown({
         >
             <button
                 type="button"
-                className="hover:text-primary transition-colors"
+                className="inline-flex min-h-11 cursor-pointer items-center hover:text-primary-text transition-colors"
                 onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+                aria-haspopup="true"
             >
                 {label}
             </button>
             <AnimatePresence>
                 {open && (
-                    <motion.ul
-                        initial={{ opacity: 0, y: -4 }}
+                    // Top padding, not margin, bridges the gap to the trigger so
+                    // the pointer never leaves the item on its way into the menu.
+                    <motion.div
+                        initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        className="absolute top-full left-0 mt-2 bg-gray-900 border border-white/10 rounded-md py-2 min-w-[160px] z-[1000]"
+                        exit={{ opacity: 0, y: -4, transition: { duration: 0.12 } }}
+                        transition={{ duration: MOTION_DURATION_FAST, ease: MOTION_EASE_OUT }}
+                        className="absolute top-full left-0 z-[1000] pt-1"
                     >
-                        {links.map((link) => (
-                            <li key={link.category}>
-                                <NavLink
-                                    to={`/list/${mediaType}/${link.category}`}
-                                    className="block px-4 py-2 text-sm text-white hover:bg-primary/20 hover:text-primary"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    {link.label}
-                                </NavLink>
-                            </li>
-                        ))}
-                    </motion.ul>
+                        <ul className="bg-surface border border-line rounded-lg py-2 min-w-[180px] shadow-popover">
+                            {links.map((link) => (
+                                <li key={link.category}>
+                                    <NavLink
+                                        to={`/list/${mediaType}/${link.category}`}
+                                        className={navLinkClassName}
+                                        onClick={() => setOpen(false)}
+                                        viewTransition
+                                    >
+                                        {link.label}
+                                    </NavLink>
+                                </li>
+                            ))}
+                        </ul>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </li>
@@ -60,6 +95,8 @@ function NavDropdown({
 export function Nav() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const hasSession = useAuthStore((s) => s.hasSession());
+    const tone = useNavTone();
+    const overImage = tone === "onImage";
 
     useEffect(() => {
         if (!mobileOpen) return;
@@ -76,28 +113,62 @@ export function Nav() {
     }, [mobileOpen]);
 
     return (
-        <nav className="absolute top-0 left-0 w-full z-[999]">
-            <div className="h-[10vh] max-w-[85%] w-full mx-auto flex items-center justify-between">
-                <NavLink to="/">
-                    <img src="/img/logo.png" alt="MovieZone Logo" className="h-6 sm:h-10" />
+        <nav className={cn("absolute top-0 left-0 w-full z-[999]", overImage && "text-white")}>
+            {overImage && (
+                <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b from-scrim/60 via-scrim/30 to-transparent"
+                />
+            )}
+
+            <div className="relative h-[10vh] max-w-[85%] w-full mx-auto flex items-center justify-between">
+                <NavLink to="/" aria-label="MovieZone home" viewTransition>
+                    {overImage ? (
+                        <img
+                            src="/img/logo.png"
+                            alt="MovieZone Logo"
+                            width={243}
+                            height={56}
+                            className="h-6 sm:h-10"
+                        />
+                    ) : (
+                        <picture>
+                            <source
+                                srcSet="/img/logo-light.png"
+                                media="(prefers-color-scheme: light)"
+                            />
+                            <img
+                                src="/img/logo.png"
+                                alt="MovieZone Logo"
+                                width={243}
+                                height={56}
+                                className="h-6 sm:h-10"
+                            />
+                        </picture>
+                    )}
                 </NavLink>
 
-                <div className="items-center gap-6 text-white hidden md:flex">
-                    <SearchBar />
+                <div className="items-center gap-6 hidden md:flex">
+                    <SearchBar tone={tone} />
 
                     <ul className="flex items-center gap-4">
                         <NavDropdown label="Movies" links={NAV_MOVIE_LINKS} mediaType="movie" />
                         <NavDropdown label="TV Shows" links={NAV_TV_LINKS} mediaType="tv" />
                     </ul>
 
-                    <NavLink to={hasSession ? "/profile" : "/login"}>
+                    <NavLink
+                        to={hasSession ? "/profile" : "/login"}
+                        aria-label={hasSession ? "Your profile" : "Log in"}
+                        className="rounded-full"
+                        viewTransition
+                    >
                         <UserAvatar size={36} />
                     </NavLink>
                 </div>
 
                 <button
                     type="button"
-                    className="md:hidden text-white"
+                    className="md:hidden -mr-2 inline-flex size-11 items-center justify-center"
                     onClick={() => setMobileOpen(true)}
                     aria-label="Open menu"
                 >
@@ -112,15 +183,16 @@ export function Nav() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/60 z-[1000] md:hidden"
+                            transition={{ duration: MOTION_DURATION_FAST }}
+                            className="fixed inset-0 bg-scrim/60 z-[1000] md:hidden"
                             onClick={() => setMobileOpen(false)}
                         />
                         <motion.aside
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-gray-900 z-[1001] p-6 text-white md:hidden overflow-y-auto"
+                            transition={{ duration: MOTION_DURATION, ease: MOTION_EASE_OUT }}
+                            className="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-surface text-ink z-[1001] p-6 md:hidden overflow-y-auto"
                         >
                             <div className="flex justify-between items-center mb-8">
                                 <span className="font-semibold">Menu</span>
@@ -128,6 +200,7 @@ export function Nav() {
                                     type="button"
                                     onClick={() => setMobileOpen(false)}
                                     aria-label="Close menu"
+                                    className="-mr-2 inline-flex size-11 items-center justify-center text-ink-muted hover:text-ink"
                                 >
                                     <X size={24} />
                                 </button>
@@ -139,14 +212,16 @@ export function Nav() {
 
                             <div className="space-y-6">
                                 <div>
-                                    <p className="text-xs text-gray-400 uppercase mb-2">Movies</p>
+                                    <p className="text-xs text-ink-subtle uppercase tracking-wide mb-1">
+                                        Movies
+                                    </p>
                                     <ul className="space-y-2">
                                         {NAV_MOVIE_LINKS.map((link) => (
                                             <li key={link.category}>
                                                 <NavLink
                                                     to={`/list/movie/${link.category}`}
                                                     onClick={() => setMobileOpen(false)}
-                                                    className="block py-1 hover:text-primary"
+                                                    className={drawerLinkClassName}
                                                 >
                                                     {link.label}
                                                 </NavLink>
@@ -155,14 +230,16 @@ export function Nav() {
                                     </ul>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 uppercase mb-2">TV Shows</p>
+                                    <p className="text-xs text-ink-subtle uppercase tracking-wide mb-1">
+                                        TV Shows
+                                    </p>
                                     <ul className="space-y-2">
                                         {NAV_TV_LINKS.map((link) => (
                                             <li key={link.category}>
                                                 <NavLink
                                                     to={`/list/tv/${link.category}`}
                                                     onClick={() => setMobileOpen(false)}
-                                                    className="block py-1 hover:text-primary"
+                                                    className={drawerLinkClassName}
                                                 >
                                                     {link.label}
                                                 </NavLink>
@@ -170,12 +247,12 @@ export function Nav() {
                                         ))}
                                     </ul>
                                 </div>
-                                <div className="border-t border-white/10 pt-4">
+                                <div className="border-t border-line pt-4">
                                     {hasSession ? (
                                         <NavLink
                                             to="/profile"
                                             onClick={() => setMobileOpen(false)}
-                                            className="flex items-center gap-3 py-2 hover:text-primary"
+                                            className="flex items-center gap-3 py-2 hover:text-primary-text"
                                         >
                                             <UserAvatar size={28} />
                                             Profile
@@ -185,14 +262,14 @@ export function Nav() {
                                             <NavLink
                                                 to="/login"
                                                 onClick={() => setMobileOpen(false)}
-                                                className="block py-2 hover:text-primary"
+                                                className={drawerLinkClassName}
                                             >
                                                 Login
                                             </NavLink>
                                             <Link
                                                 to="/login"
                                                 onClick={() => setMobileOpen(false)}
-                                                className="block py-2 text-gray-400 hover:text-primary"
+                                                className="block py-2 text-ink-muted hover:text-primary-text"
                                             >
                                                 Browse as Guest
                                             </Link>
