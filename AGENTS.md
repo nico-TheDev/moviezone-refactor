@@ -18,7 +18,8 @@ Tracer Bullet (prove the whole pattern on one route, then widen it route by rout
 # Install
 npm install
 
-# Dev server (two processes, separate terminals)
+# Dev server (two processes: run both with dev:all, or each in its own terminal)
+npm run dev:all      # both of the below, output prefixed [server] / [web]
 npm run dev:server   # BFF on http://localhost:3001
 npm run dev          # Vite on http://localhost:5173, proxies /api to the BFF
 

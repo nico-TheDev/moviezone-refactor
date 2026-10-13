@@ -164,10 +164,16 @@ cp .env.example .env
 
 ### Development
 
-The frontend dev server and BFF run as two processes. In separate terminals:
+The frontend dev server and BFF run as two processes. Start both with one command:
 
 ```bash
 npm install
+npm run dev:all      # BFF on http://localhost:3001 + Vite on http://localhost:5173
+```
+
+Or run them in separate terminals:
+
+```bash
 npm run dev:server   # BFF on http://localhost:3001
 npm run dev          # Vite + React Router on http://localhost:5173
 ```
@@ -197,6 +203,7 @@ docker run -p 3001:3001 \
 |---|---|
 | `npm run dev` | Frontend dev server with HMR |
 | `npm run dev:server` | BFF dev server |
+| `npm run dev:all` | BFF and frontend dev servers together |
 | `npm run build` | Production client build |
 | `npm start` | Production BFF + static hosting |
 | `npm run typecheck` | React Router typegen + `tsc` |
