@@ -26,6 +26,7 @@ npm run dev          # Vite on http://localhost:5173, proxies /api to the BFF
 # Build and run production
 npm run build        # outputs to build/client/
 npm start            # BFF serves static files + API
+npm run deploy       # build, then deploy to Cloudflare Workers (wrangler.jsonc)
 
 # Test and checks
 npm test             # Vitest unit and component tests
