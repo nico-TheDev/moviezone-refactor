@@ -1,0 +1,23 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "moviezone-refactor",
+    "main": "./server/worker.ts",
+    "compatibility_date": "2026-10-12",
+    // nodejs_compat exposes vars and secrets on process.env, which server/env.ts reads.
+    "compatibility_flags": ["nodejs_compat"],
+    "assets": {
+        "directory": "./build/client",
+        "binding": "ASSETS",
+        "not_found_handling": "single-page-application",
+        // Route every request through the Worker so security headers apply to static files too.
+        "run_worker_first": true
+    },
+    // Secrets (set in the Cloudflare dashboard or with `wrangler secret put`):
+    // TMDB_BEARER_TOKEN, TMDB_API_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
+    "vars": {
+        "NODE_ENV": "production"
+    },
+    "observability": {
+        "enabled": true
+    }
+}

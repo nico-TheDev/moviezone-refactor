@@ -8,3 +8,6 @@
 
 # Impeccable design tool state
 /.impeccable/
+
+# Wrangler
+/.wrangler/
