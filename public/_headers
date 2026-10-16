@@ -1,0 +1,9 @@
+# Cloudflare static asset headers. Static files skip the Worker, so they get these instead
+# of server/middleware/security-headers.ts. Keep both in step (tests/unit/security-headers.test.ts).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://image.tmdb.org https://www.gravatar.com https://secure.gravatar.com data:; connect-src 'self'; worker-src 'self'; frame-src https://www.youtube-nocookie.com
+  Strict-Transport-Security: max-age=31536000; includeSubDomains

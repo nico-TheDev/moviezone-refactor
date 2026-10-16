@@ -1,6 +1,13 @@
 import type { Context } from "hono";
 import { getCookie } from "hono/cookie";
-import { getCacheTtlMs, isCacheableGet, readCache, writeCache } from "./cache";
+import {
+    getCacheTtlMs,
+    isCacheableGet,
+    readCache,
+    readEdgeCache,
+    writeCache,
+    writeEdgeCache,
+} from "./cache";
 import { assertServerEnv } from "./env";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
@@ -48,6 +55,16 @@ export function sanitizeTmdbPath(rawPath: string): string | null {
     return `${pathname}${search}`;
 }
 
+/** Finishes background work after the response on Workers. Node has no executionCtx. */
+function runAfterResponse(c: Context, task: Promise<void>) {
+    const settled = task.catch(() => {});
+    try {
+        c.executionCtx.waitUntil(settled);
+    } catch {
+        // Not on Workers: the promise still runs, nothing needs to wait for it.
+    }
+}
+
 export async function proxyTmdbRequest(
     c: Context,
     method: string,
@@ -66,7 +83,12 @@ export async function proxyTmdbRequest(
     const ttl = getCacheTtlMs(resolvedPath);
 
     if (isCacheableGet(method, resolvedPath)) {
-        const cached = readCache(cacheKey);
+        let cached = readCache(cacheKey);
+        if (!cached) {
+            cached = await readEdgeCache(cacheKey);
+            if (cached)
+                writeCache(cacheKey, cached.body, cached.status, cached.expiresAt - Date.now());
+        }
         if (cached) {
             return new Response(cached.body, {
                 status: cached.status,
@@ -89,6 +111,7 @@ export async function proxyTmdbRequest(
 
     if (isCacheableGet(method, resolvedPath) && response.ok) {
         writeCache(cacheKey, text, response.status, ttl);
+        runAfterResponse(c, writeEdgeCache(cacheKey, text, response.status, ttl));
     }
 
     return new Response(text, {

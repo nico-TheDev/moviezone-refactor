@@ -1,13 +1,14 @@
 import { createApp } from "./app";
+import type { RateLimitBindings } from "./middleware/rate-limit";
 
-type Bindings = {
+type Bindings = RateLimitBindings & {
     ASSETS: { fetch: (request: Request) => Promise<Response> };
 };
 
 const app = createApp<{ Bindings: Bindings }>();
 
-// Static assets, with Cloudflare's single-page-application handling returning index.html
-// for client routes. Re-wrapped so securityHeaders can set headers on the response.
+// run_worker_first only routes /api/* and /health here, so this fallback is rarely hit.
+// Static assets and SPA routes are normally served before the Worker runs.
 app.all("*", async (c) => {
     const res = await c.env.ASSETS.fetch(c.req.raw);
     return new Response(res.body, res);
